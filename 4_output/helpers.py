@@ -11,6 +11,41 @@ from pathlib import Path
 
 ANALYSES_DIR = Path(__file__).parent.parent / "3_analyses"
 
+REQUIRED_KEYS = {"query", "n_results", "results", "description", "interpretation", "figures"}
+
+
+def validate_results(data, name):
+    """Check that a results.json dict conforms to the expected schema.
+
+    Raises ValueError with a descriptive message if validation fails.
+    """
+    missing = REQUIRED_KEYS - set(data.keys())
+    if missing:
+        raise ValueError(
+            f"Analysis '{name}/results.json' is missing required keys: {missing}"
+        )
+    if not isinstance(data["results"], list):
+        raise ValueError(
+            f"Analysis '{name}/results.json': 'results' must be a list, "
+            f"got {type(data['results']).__name__}"
+        )
+    if data["n_results"] != len(data["results"]):
+        raise ValueError(
+            f"Analysis '{name}/results.json': 'n_results' is {data['n_results']} "
+            f"but 'results' has {len(data['results'])} items"
+        )
+    if not isinstance(data["figures"], list):
+        raise ValueError(
+            f"Analysis '{name}/results.json': 'figures' must be a list, "
+            f"got {type(data['figures']).__name__}"
+        )
+    for i, fig in enumerate(data["figures"]):
+        for key in ("file", "caption"):
+            if key not in fig:
+                raise ValueError(
+                    f"Analysis '{name}/results.json': figures[{i}] is missing '{key}'"
+                )
+
 
 def load_analysis(name):
     """Load results.json from a named analysis subfolder.
@@ -27,7 +62,9 @@ def load_analysis(name):
             f"Analysis '{name}' not found at {p}. "
             f"Run: cd 3_analyses/{name} && python run.py"
         )
-    return json.load(open(p))
+    data = json.load(open(p))
+    validate_results(data, name)
+    return data
 
 
 def load_figure(name, fig_name):

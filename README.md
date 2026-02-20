@@ -17,6 +17,13 @@ A reusable project structure for data analysis projects. Each stage has its own 
 | `3_analyses/` | `2_db/project.duckdb` | JSON + optional figures per subfolder | Run SQL queries, interpret results, generate figures |
 | `4_output/` | `3_analyses/*/results.json` | PDF report, slides, etc. | Write the final deliverable with Quarto |
 
+## Prerequisites
+
+- **Python 3.10+**
+- **Quarto** ([quarto.org](https://quarto.org/docs/get-started/)): needed for rendering reports and slides in `4_output/`.
+- **LuaLaTeX**: the report template uses `lualatex` as the PDF engine. Install a TeX distribution (e.g., TeX Live or MacTeX).
+- **Helvetica Neue** font: used by the report preamble. Pre-installed on macOS; on Linux, install `texlive-fonts-extra` or substitute in `preamble.tex`.
+
 ## Quick Start
 
 ```bash

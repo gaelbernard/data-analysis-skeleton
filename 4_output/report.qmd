@@ -41,10 +41,10 @@ from helpers import load_analysis, load_figure
 \begin{disclaimerbox}[Disclaimer]
 \small
 \begin{itemize}[leftmargin=1.5em, itemsep=4pt, topsep=2pt]
-\item \textbf{Data source.} _Describe the data and its limitations._
-\item \textbf{AI-assisted.} _If applicable, describe how AI was used and what safeguards were applied._
-\item \textbf{Methodological choices.} _Flag key analytical choices that affect interpretation._
-\item \textbf{Scope and intent.} _Clarify what this report is and is not._
+\item \textbf{Data source.} \textit{Describe the data and its limitations.}
+\item \textbf{AI-assisted.} \textit{If applicable, describe how AI was used and what safeguards were applied.}
+\item \textbf{Methodological choices.} \textit{Flag key analytical choices that affect interpretation.}
+\item \textbf{Scope and intent.} \textit{Clarify what this report is and is not.}
 \end{itemize}
 \end{disclaimerbox}
 
@@ -55,7 +55,7 @@ from helpers import load_analysis, load_figure
 _Brief overview of the project and its main findings._
 
 \begin{tcolorbox}[reportbox, title=Key Findings]
-_Summarize the most important results here._
+\textit{Summarize the most important results here.}
 \end{tcolorbox}
 
 \newpage

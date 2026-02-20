@@ -10,7 +10,7 @@ __pycache__/
 2_db/*.duckdb
 2_db/*.wal
 
-# Quarto build artifacts
+# Quarto build artifacts (PDFs are intentionally tracked)
 4_output/*.tex
 4_output/*.log
 4_output/*_files/

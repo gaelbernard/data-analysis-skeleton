@@ -2,15 +2,21 @@
 # Example analysis script — use as a template for new analyses.
 # Run: cd 3_analyses/example_analysis && python run.py
 
-import duckdb, json
+import sys, duckdb, json
 import pandas as pd
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from pathlib import Path
 
+DB_PATH = Path("../../2_db/project.duckdb")
+if not DB_PATH.exists():
+    print("⚠ Skipping: database not found at", DB_PATH)
+    print("  Run 'make db' first, or delete this example folder when starting a real project.")
+    sys.exit(0)
+
 Path("figures").mkdir(exist_ok=True)
-con = duckdb.connect("../../2_db/project.duckdb", read_only=True)
+con = duckdb.connect(str(DB_PATH), read_only=True)
 
 # ── Query ────────────────────────────────────────────────────────
 query = """
