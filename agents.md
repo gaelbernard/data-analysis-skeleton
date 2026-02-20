@@ -229,9 +229,20 @@ Every analysis question listed in the plan has a corresponding subfolder with a 
 
 **Goal**: Produce the final deliverable (report, slides, etc.) using Quarto.
 
+**How to detect you're in Stage 4**: The user signals that analyses are sufficient and they want to produce the deliverable (e.g., "let's create the report", "I think we have enough data for the slides"). `3_analyses/` has subfolders with valid `results.json` files.
+
+### What the agent should do
+
+1. **Ask which deliverable**: Report or slides? Don't create both at once. Start with what the user asks for. They can add the other later.
+2. **Review available data**: Read all `results.json` files in `3_analyses/` to understand what data is available. Also read `0_plan/plan.md` for context (objective, audience, output format).
+3. **Propose a structure**: Based on the available analyses and the plan, propose an outline for the report or slides. Present it to the user for confirmation.
+4. **Write the deliverable**: Fill in the `.qmd` file using `load_analysis()` and `load_figure()` to pull data from `3_analyses/`. Never hardcode numbers.
+5. **Fill gaps autonomously**: If while writing you notice simple data is missing (a count, a percentage, a breakdown derivable from the existing schema), go create a new analysis in `3_analyses/` (subfolder + `run.py`), run it, and use the results. No need to ask permission for straightforward queries. For complex or ambiguous questions, ask the user first.
+6. **Customize templates**: Update `titlepage.tex` with the project's title, author, and branding. Adjust the header text in `preamble.tex` if needed.
+
 ### The Golden Rule
 
-**Never write a number directly in a Quarto document.** Every number, count, percentage, or statistic must be loaded from a `results.json` in `3_analyses/`. If the data you need doesn't exist as a JSON, go back to `3_analyses/` and create a new analysis first.
+**Never write a number directly in a Quarto document.** Every number, count, percentage, or statistic must be loaded from a `results.json` in `3_analyses/`. If the data you need doesn't exist as a JSON, go back to `3_analyses/` and create a new analysis first -- for simple, obvious queries you can do this autonomously without asking.
 
 ### Loading Data
 

@@ -4,10 +4,12 @@ Produce the final deliverable (report, slides) using Quarto.
 
 ## What to do
 
-1. Edit `report.qmd` and/or `slides.qmd`
-2. Use `helpers.py` to load data from `3_analyses/` -- never hardcode numbers
-3. Customize templates in `templates/report/` or `templates/slides/`
-4. Render with `make report` or `make slides` (from root)
+1. Tell the LLM you're ready to produce the deliverable (report or slides -- pick one to start).
+2. The LLM will review available analyses and propose a structure.
+3. It will write the `.qmd`, pulling all data from `3_analyses/` via `helpers.py`.
+4. If simple data is missing, the LLM will create new analyses in `3_analyses/` autonomously.
+5. Customize `templates/report/titlepage.tex` with your project details.
+6. Render with `make report` or `make slides`.
 
 ## The Golden Rule
 
@@ -64,5 +66,6 @@ make slides     # or: cd 4_output && quarto render slides.qmd
 - `report.qmd` -- Report template (Quarto + LuaLaTeX -> PDF)
 - `slides.qmd` -- Slides template (Quarto Beamer -> PDF)
 - `templates/report/preamble.tex` -- LaTeX preamble with custom environments and styles
-- `templates/report/titlepage.tex` -- Custom title page (create per project if needed)
+- `templates/report/titlepage.tex` -- Custom title page (edit per project)
+- `templates/report/epfl_logo.png` -- Logo for the title page
 - `templates/slides/` -- Beamer theme customizations
