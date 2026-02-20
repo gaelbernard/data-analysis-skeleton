@@ -26,6 +26,7 @@ The project is organized into 5 stages. Data flows forward only — never skip a
 - **Dependencies**: All Python dependencies go in `requirements.txt` at the root.
 - **Skeleton improvements**: When you modify a generic file that could benefit future projects (agents.md, Makefile, helpers.py, templates, READMEs), prefix the commit message with `[skeleton]`. Example: `git commit -m "[skeleton] improve JSON schema documentation"`.
 - **Stage gates**: Before starting work in any stage, verify that prerequisite stages are complete. If `plan.md` still has placeholders, don't start collecting data. If `sources.yaml` is missing entries for files in `1_data/`, don't build the DB or run analyses. If documentation or provenance is unclear, **stop and ask the user to fill the gaps before proceeding**. Never skip a stage just because the user is eager to move forward.
+- **Writing style**: Never use em dashes (--) in reports, slides, or any written output. Use commas, parentheses, colons, or separate sentences instead.
 
 ---
 
@@ -220,13 +221,22 @@ data = load_analysis("value_frequency")
 fig_path = load_figure("value_frequency", "bar_chart.pdf")
 ```
 
-### Figures in Reports
+### Report Structure and Conventions
 
-Figures are generated in `3_analyses/` (not in `4_output/`). The report references them by path using `load_figure()`. This ensures figures and data stay in sync.
+The `report.qmd` template provides a standard structure. Follow these conventions:
+
+1. **Disclaimer box** (`disclaimerbox`): Start every report with an orange disclaimer box flagging data limitations, AI usage, methodological choices, and scope. Adapt the items to the project.
+2. **Executive Summary** (unnumbered): A short overview with a blue `reportbox` highlighting key findings.
+3. **Body sections** (numbered): Introduction, Methodology, Results, Discussion, Conclusion.
+4. **Appendices** (unnumbered): Put detailed or large data tables in appendices. Reference them from the main text with `\mbox{Table~\ref{tab:label}}`. The main text should tell the story; the appendix holds the evidence.
+5. **Document quotes** (`docquote`): When quoting source documents, use the `docquote` environment with the exact quote in italics, followed by attribution (document name, year) and an optional category label.
+6. **Tables**: Use booktabs style (`\toprule`, `\midrule`, `\bottomrule`). Always include `\caption` and `\label`. Use `[H]` placement.
+7. **Figures**: Generated in `3_analyses/`, referenced via `load_figure()`. Always `[H]` placement with caption and label. Prefer PDF for vector graphics.
 
 ### Templates
 
-- `templates/report/` — LaTeX preamble, title page, styles for reports.
+- `templates/report/preamble.tex` — LaTeX preamble with colors, tcolorbox environments (`disclaimerbox`, `reportbox`, `docquote`), and package imports.
+- `templates/report/titlepage.tex` — Custom title page (create per project if needed).
 - `templates/slides/` — Beamer theme files for slides.
 
 Customize these per project. When you create a reusable template improvement, commit with `[skeleton]` prefix.
