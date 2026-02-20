@@ -117,15 +117,38 @@ Rules:
 
 **Goal**: Answer analytical questions by querying the DuckDB and producing structured JSON outputs.
 
+**How to detect you're in Stage 3**: `2_db/project.duckdb` exists and `2_db/schema.md` has real content (not just the placeholder). The plan's "Analyses" section lists questions that haven't been answered yet (no corresponding subfolder in `3_analyses/`, or subfolder exists but has no `results.json`).
+
 ### Pre-flight check
 
 Before writing or running any analysis, verify:
 
 1. **Plan exists**: `0_plan/plan.md` is filled in (no placeholder text).
 2. **Data is documented**: Every data file in `1_data/` has a corresponding entry in `sources.yaml` with origin, date, and description. If any file is undocumented or provenance is unclear, **stop and ask the user to complete `sources.yaml` before proceeding**.
-3. **DB is built**: `2_db/project.duckdb` exists and `2_db/schema.md` is up to date.
+3. **DB is built**: `2_db/project.duckdb` exists. Read `2_db/schema.md` to understand available tables, columns, and types -- this is your SQL reference for all queries.
 
 Do not skip these checks. Incomplete provenance upstream makes analysis results unreliable and unreproducible.
+
+### What the agent should do
+
+#### First entry (no analyses exist yet)
+
+When `3_analyses/` has no subfolders with `results.json` (only `example_analysis/` or empty), the agent should proactively bootstrap the analysis stage:
+
+1. **Read the inputs**: Read `0_plan/plan.md` (especially the "Analyses" section) and `2_db/schema.md` to understand what questions need answering and what data is available.
+2. **Propose a batch of analyses**: Based on the plan and schema, propose a list of analyses to the user: subfolder name, short description, the SQL query, and whether a figure would add value. Present this as a checklist for the user to confirm, adjust, or extend.
+3. **Ask when in doubt**: If a question from the plan is ambiguous or doesn't map clearly to the schema, ask the user rather than guessing.
+4. **Generate all confirmed analyses**: Create all subfolders with their `run.py` scripts, run them, and produce the `results.json` files. Include figures where they help (distributions, trends, comparisons).
+5. **Leave interpretation for review**: Fill in `interpretation` with a first attempt, but flag it for the user to review. Some interpretations require domain knowledge the agent may not have.
+
+This first batch is a starting point. Some analyses will be refined, some discarded, and new ones added through interaction. That is expected.
+
+#### Subsequent visits (some analyses exist)
+
+1. **Check completeness**: Cross-reference the plan's "Analyses" list with existing subfolders. Flag any gaps.
+2. **Refine on request**: If the user asks to adjust an existing analysis (new filter, different grouping), update it in place.
+3. **Handle schema changes**: If `2_db/schema.md` has changed, check which queries might be affected and re-run them.
+4. **New questions**: If the user asks a new question, create a new subfolder.
 
 ### Structure
 
@@ -192,9 +215,13 @@ Fields:
 
 ### When to Create a New Analysis vs. Update an Existing One
 
-- **New subfolder**: when answering a new question.
+- **New subfolder**: when answering a new question. Use descriptive `snake_case` names.
 - **Update existing**: when refining the same question (adding a filter, changing a grouping).
 - **Never delete**: if an analysis is superseded, rename the folder with a `_deprecated_` prefix.
+
+### When is Stage 3 done?
+
+Every analysis question listed in the plan has a corresponding subfolder with a valid `results.json`. Interpretations have been reviewed (either filled by the agent and confirmed by the user, or filled by the user directly). Then move to `4_output/`.
 
 ---
 

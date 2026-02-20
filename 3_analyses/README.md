@@ -2,12 +2,13 @@
 
 Query the DuckDB and produce structured JSON outputs (+ optional figures).
 
-## What to do
+## How to use
 
-1. Create a subfolder for each analysis (use a descriptive `snake_case` name)
-2. Write a `run.py` that queries the DB and outputs `results.json`
-3. Optionally generate figures in a `figures/` subfolder
-4. Run `make analyses` (from root) to execute all analyses, or `cd 3_analyses/my_analysis && python run.py` for a single one
+1. Check `0_plan/plan.md` -- the "Analyses" section lists the questions to answer.
+2. Read `2_db/schema.md` to understand available tables and columns.
+3. On first entry, the LLM will propose a batch of analyses based on the plan and schema. Review, adjust, and confirm.
+4. Run `make analyses` (from root) to execute all, or `cd 3_analyses/my_analysis && python run.py` for one.
+5. Refine iteratively: adjust queries, add figures, update interpretations.
 
 ## Structure
 
@@ -46,7 +47,11 @@ Every `results.json` must have this structure:
 - Run scripts from their subfolder: `cd 3_analyses/my_analysis && python run.py`
 - Figures must use the same data as the JSON (or a subset, never more)
 - If the DB schema changes, re-run affected analyses (`make analyses`)
-- Never delete old analyses — prefix with `_deprecated_` if superseded
+- Never delete old analyses -- prefix with `_deprecated_` if superseded
+
+## When is this stage done?
+
+When every analysis question from the plan has a subfolder with a valid `results.json` and interpretations have been reviewed. Then move to `4_output/`.
 
 ## Example
 
