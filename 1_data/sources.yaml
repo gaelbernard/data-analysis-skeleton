@@ -1,6 +1,7 @@
 # Data Sources
 # Document every raw data file in this folder.
 # This file is the single source of truth for data provenance.
+# All data is considered public by default. Mark confidential: true for sensitive data.
 
 # Example:
 # - file: survey_results.csv
@@ -10,4 +11,27 @@
 #   description: "Raw survey responses, 1200 respondents, 25 questions"
 #   format: CSV
 #   encoding: utf-8
+#   confidential: false
 #   notes: "Exported with all optional fields included"
+#
+# Confidential data (will not be committed to git):
+# - file: hr_salaries.xlsx
+#   origin: "HR department, received from Alice Martin"
+#   url: ""
+#   accessed: 2026-02-10
+#   description: "Employee salary data, 300 records"
+#   format: XLSX
+#   encoding: ""
+#   confidential: true
+#   notes: "Do not share outside the team. Added to .gitignore."
+#
+# Imperfect provenance is better than no provenance:
+# - file: mystery_data.xlsx
+#   origin: "Received from Jean Dupont via email"
+#   url: ""
+#   accessed: 2026-02-10
+#   description: "Sales figures Q4 2025, exact extraction method unknown"
+#   format: XLSX
+#   encoding: ""
+#   confidential: false
+#   notes: "Provenance uncertain -- verify with Jean before publishing"

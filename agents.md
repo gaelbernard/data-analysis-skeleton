@@ -25,6 +25,7 @@ The project is organized into 5 stages. Data flows forward only — never skip a
 - **API keys**: Never hardcode API keys. Use a `.env` file with `python-dotenv`. See `.env.example` for the template.
 - **Dependencies**: All Python dependencies go in `requirements.txt` at the root.
 - **Skeleton improvements**: When you modify a generic file that could benefit future projects (agents.md, Makefile, helpers.py, templates, READMEs), prefix the commit message with `[skeleton]`. Example: `git commit -m "[skeleton] improve JSON schema documentation"`.
+- **Stage gates**: Before starting work in any stage, verify that prerequisite stages are complete. If `plan.md` still has placeholders, don't start collecting data. If `sources.yaml` is missing entries for files in `1_data/`, don't build the DB or run analyses. If documentation or provenance is unclear, **stop and ask the user to fill the gaps before proceeding**. Never skip a stage just because the user is eager to move forward.
 
 ---
 
@@ -70,11 +71,29 @@ The user can trigger consolidation explicitly (e.g., "let's finalize the plan") 
 
 **Goal**: Gather all raw data needed for the project.
 
-Rules:
-- Every data file must be documented in `sources.yaml` with: filename, origin, URL (if applicable), date accessed, description, and format.
-- Raw data is committed to git (unless too large — in that case, document how to obtain it and add a download script in `1_data/`).
+**How to detect you're in Stage 1**: `0_plan/plan.md` is complete (no placeholder text), but `1_data/` has no actual data files yet — or has some but not all files listed in the plan's "Input Data" section.
+
+### What the agent should do
+
+1. **Read the plan**: Start by reading `0_plan/plan.md`, especially the "Input Data" section, to know what data is needed.
+2. **Help collect**: Depending on the situation:
+   - If the user drops files into `1_data/` manually, help document them in `sources.yaml`.
+   - If data comes from an API, write a collection script in `1_data/` (e.g., `fetch_*.py`).
+   - If the user needs help finding data, suggest sources based on the plan.
+3. **Document everything**: After each file is added, update `sources.yaml` with its provenance.
+4. **Check completeness**: Cross-reference the plan's "Input Data" table with what's actually in `1_data/`. Flag anything missing.
+
+### Rules
+
+- Every data file must be documented in `sources.yaml` with: filename, origin, URL (if applicable), date accessed, description, format, and `confidential` flag.
+- **Confidentiality**: All data is public by default (`confidential: false`). If a file is confidential (`confidential: true`), it must be added to `.gitignore` so it is never committed. The `sources.yaml` entry itself is still committed — only the data file is excluded.
+- Raw data is committed to git (unless too large or confidential — in either case, document how to obtain it and add a download script in `1_data/`).
 - Never modify raw data files after collection. All transformations happen in `2_db/`.
 - If data comes from an API or database, write a collection script in `1_data/` and document it in `sources.yaml`.
+
+### When is Stage 1 done?
+
+Every data source listed in the plan has a corresponding file in `1_data/` and an entry in `sources.yaml`. This is enforced — the agent will refuse to proceed to later stages if documentation is incomplete. Then move to `2_db/`.
 
 ---
 
@@ -96,6 +115,16 @@ Rules:
 ## Stage 3: Analyses (`3_analyses/`)
 
 **Goal**: Answer analytical questions by querying the DuckDB and producing structured JSON outputs.
+
+### Pre-flight check
+
+Before writing or running any analysis, verify:
+
+1. **Plan exists**: `0_plan/plan.md` is filled in (no placeholder text).
+2. **Data is documented**: Every data file in `1_data/` has a corresponding entry in `sources.yaml` with origin, date, and description. If any file is undocumented or provenance is unclear, **stop and ask the user to complete `sources.yaml` before proceeding**.
+3. **DB is built**: `2_db/project.duckdb` exists and `2_db/schema.md` is up to date.
+
+Do not skip these checks. Incomplete provenance upstream makes analysis results unreliable and unreproducible.
 
 ### Structure
 
