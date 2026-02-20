@@ -34,11 +34,12 @@ cp .env.example .env       # fill in your API keys
 Then follow the pipeline: plan → collect data → build DB → run analyses → render output.
 
 ```bash
-make db          # Build the DuckDB from 1_data/
-make analyses    # Run all analysis scripts in 3_analyses/
-make report      # Render the Quarto report
-make slides      # Render the Quarto slides
-make all         # Run everything in order
+make db              # Build the DuckDB from 1_data/
+make analyses        # Run all analysis scripts in 3_analyses/
+make report          # Render the Quarto report
+make slides          # Render the Quarto slides
+make all             # Run everything in order
+make skeleton-sync msg="..."  # Commit + push skeleton improvements
 ```
 
 ## Key Rules
@@ -86,41 +87,19 @@ cp .env.example .env   # edit with your actual API keys
 
 ### During a Project: Improving the Skeleton
 
-Sometimes you'll improve something generic (a better `agents.md` rule, a `Makefile` tweak, a better template). When you do, **prefix the commit message with `[skeleton]`**:
+Sometimes you'll improve something generic (a better `agents.md` rule, a `Makefile` tweak, a better template). When you do, stage the files and use `make skeleton-sync`:
 
 ```bash
 git add agents.md
-git commit -m "[skeleton] add rule about figure naming convention"
-git push origin main    # goes to your project repo as usual
+make skeleton-sync msg="add rule about figure naming convention"
 ```
 
-This prefix makes it easy to find skeleton improvements later.
+This will:
+1. Commit the staged files to your project with a `[skeleton]` prefix.
+2. If the `skeleton` remote is configured, automatically cherry-pick the commit and push it there.
+3. If no `skeleton` remote exists, it commits locally (you can backport later).
 
-### After a Project: Backporting to the Skeleton
-
-When the project is done (or anytime), push your skeleton improvements back:
-
-1. See all skeleton-related commits:
-```bash
-git log --oneline --grep="\[skeleton\]"
-```
-This will show something like:
-```
-a3f1c2d [skeleton] add rule about figure naming convention
-b7e4d9a [skeleton] improve Makefile with clean target
-```
-
-2. Create a temporary branch from the skeleton, cherry-pick the improvements, and push:
-```bash
-git fetch skeleton
-git checkout -b backport skeleton/main
-git cherry-pick a3f1c2d b7e4d9a       # list the commit hashes from step 1
-git push skeleton backport:main        # push to the skeleton repo
-git checkout main                      # go back to your project
-git branch -d backport                 # clean up
-```
-
-That's it! Your next project will start with these improvements.
+The AI agent follows this same workflow automatically when it modifies skeleton files.
 
 ### Pulling Skeleton Updates into a Running Project
 

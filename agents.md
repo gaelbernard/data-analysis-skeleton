@@ -24,7 +24,7 @@ The project is organized into 5 stages. Data flows forward only — never skip a
 - **Coding style**: Write concise, flat scripts. No `if __name__ == "__main__"`. Minimize functions — use them only when they genuinely reduce repetition. Top-level procedural code is preferred.
 - **API keys**: Never hardcode API keys. Use a `.env` file with `python-dotenv`. See `.env.example` for the template.
 - **Dependencies**: All Python dependencies go in `requirements.txt` at the root.
-- **Skeleton improvements**: When you modify a generic file that could benefit future projects (agents.md, Makefile, helpers.py, templates, READMEs), prefix the commit message with `[skeleton]`. Example: `git commit -m "[skeleton] improve JSON schema documentation"`.
+- **Skeleton improvements**: When you modify a generic file that could benefit future projects (agents.md, Makefile, helpers.py, templates, READMEs), stage the files and run `make skeleton-sync msg="description"`. This commits with a `[skeleton]` prefix and automatically pushes the change to the skeleton remote (if configured). Example: `git add agents.md && make skeleton-sync msg="improve JSON schema documentation"`.
 - **Stage gates**: Before starting work in any stage, verify that prerequisite stages are complete. If `plan.md` still has placeholders, don't start collecting data. If `sources.yaml` is missing entries for files in `1_data/`, don't build the DB or run analyses. If documentation or provenance is unclear, **stop and ask the user to fill the gaps before proceeding**. Never skip a stage just because the user is eager to move forward.
 - **Writing style**: Never use em dashes (--) in reports, slides, or any written output. Use commas, parentheses, colons, or separate sentences instead.
 
@@ -264,7 +264,7 @@ fig_path = load_figure("value_frequency", "bar_chart.pdf")
 The `report.qmd` template provides a standard structure. Follow these conventions:
 
 1. **Disclaimer box** (`disclaimerbox`): Start every report with an orange disclaimer box flagging data limitations, AI usage, methodological choices, and scope. Adapt the items to the project.
-2. **Executive Summary** (unnumbered): A short overview with a blue `reportbox` highlighting key findings.
+2. **Executive Summary** (unnumbered): A short overview with a `reportbox` highlighting key findings.
 3. **Body sections** (numbered): Introduction, Methodology, Results, Discussion, Conclusion.
 4. **Appendices** (unnumbered): Put detailed or large data tables in appendices. Reference them from the main text with `\mbox{Table~\ref{tab:label}}`. The main text should tell the story; the appendix holds the evidence.
 5. **Document quotes** (`docquote`): When quoting source documents, use the `docquote` environment with the exact quote in italics, followed by attribution (document name, year) and an optional category label.
@@ -277,7 +277,7 @@ The `report.qmd` template provides a standard structure. Follow these convention
 - `templates/report/titlepage.tex` — Custom title page (create per project if needed).
 - `templates/slides/` — Beamer theme files for slides.
 
-Customize these per project. When you create a reusable template improvement, commit with `[skeleton]` prefix.
+Customize these per project. When you create a reusable template improvement, use `make skeleton-sync` to commit and push it to the skeleton remote.
 
 ### Rendering
 
@@ -295,11 +295,12 @@ Or use `make report` / `make slides` from the project root.
 The `Makefile` at the root provides shortcuts:
 
 ```bash
-make db          # Rebuild DuckDB from 1_data/
-make analyses    # Run all run.py scripts in 3_analyses/
-make report      # Render report with Quarto
-make slides      # Render slides with Quarto
-make all         # Run the full pipeline: db → analyses → report
+make db              # Rebuild DuckDB from 1_data/
+make analyses        # Run all run.py scripts in 3_analyses/
+make report          # Render report with Quarto
+make slides          # Render slides with Quarto
+make all             # Run the full pipeline: db → analyses → report
+make skeleton-sync msg="description"  # Commit + push skeleton improvements
 ```
 
 ---

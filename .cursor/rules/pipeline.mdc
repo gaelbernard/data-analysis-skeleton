@@ -21,7 +21,7 @@ Data flows forward only. Never skip a stage or create backward dependencies.
 7. **API keys** in `.env` only (use `python-dotenv`). Never hardcode secrets.
 8. **DB schema changes** → check and re-run affected analyses in `3_analyses/`.
 9. **Document data sources** in `1_data/sources.yaml`.
-10. **Skeleton improvements**: prefix commits with `[skeleton]` when modifying generic files (agents.md, Makefile, helpers.py, templates).
+10. **Skeleton improvements**: when modifying generic files (agents.md, Makefile, helpers.py, templates), stage them and run `make skeleton-sync msg="description"`. This commits with `[skeleton]` prefix and auto-pushes to the skeleton remote.
 
 ## File References
 

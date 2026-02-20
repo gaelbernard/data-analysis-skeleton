@@ -8,6 +8,7 @@
 #   make slides      Render the Quarto slides (PDF)
 #   make all         Run the full pipeline: db → analyses → report
 #   make clean       Remove generated files (DuckDB, JSONs, figures, PDFs)
+#   make skeleton-sync msg="..."  Commit + push skeleton improvements
 # ============================================================================
 
 # Build the DuckDB database
@@ -42,4 +43,33 @@ clean:
 	rm -f 4_output/*.pdf 4_output/*.tex 4_output/*.log
 	rm -rf 4_output/*_files/
 
-.PHONY: db analyses report slides all clean
+# Commit skeleton changes and push to the skeleton remote automatically.
+# Usage: make skeleton-sync msg="improve Makefile with clean target"
+# The changed files must be staged (git add) before running this.
+skeleton-sync:
+	@if [ -z "$(msg)" ]; then \
+		echo "✗ Usage: make skeleton-sync msg=\"description of the change\""; \
+		exit 1; \
+	fi
+	git commit -m "[skeleton] $(msg)"
+	@if git remote get-url skeleton >/dev/null 2>&1; then \
+		HASH=$$(git rev-parse HEAD) && \
+		git fetch skeleton && \
+		git checkout -b _skeleton_backport skeleton/main && \
+		if git cherry-pick $$HASH; then \
+			git push skeleton _skeleton_backport:main && \
+			echo "✓ Pushed to skeleton remote"; \
+		else \
+			echo "✗ Cherry-pick conflict. Resolve manually:"; \
+			echo "  git cherry-pick --abort  (to cancel)"; \
+			echo "  git cherry-pick --continue  (after resolving)"; \
+			git cherry-pick --abort; \
+		fi; \
+		git checkout - && \
+		git branch -D _skeleton_backport 2>/dev/null || true; \
+	else \
+		echo "⚠ No 'skeleton' remote found. Committed locally with [skeleton] prefix."; \
+		echo "  To set up: git remote add skeleton <skeleton-repo-url>"; \
+	fi
+
+.PHONY: db analyses report slides all clean skeleton-sync

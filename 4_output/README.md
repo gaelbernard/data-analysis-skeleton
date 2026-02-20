@@ -20,7 +20,7 @@ Produce the final deliverable (report, slides) using Quarto.
 The `report.qmd` template follows a standard structure:
 
 1. **Disclaimer** (orange box): Flag data limitations, AI usage, methodology choices, and scope.
-2. **Executive Summary** (unnumbered): Overview with key findings in a blue highlight box.
+2. **Executive Summary** (unnumbered): Overview with key findings in a highlight box.
 3. **Body** (numbered sections): Introduction, Methodology, Results, Discussion, Conclusion.
 4. **Appendices** (unnumbered): Detailed tables referenced from the main text.
 
@@ -29,7 +29,7 @@ The `report.qmd` template follows a standard structure:
 The preamble (`templates/report/preamble.tex`) provides three custom environments:
 
 - `disclaimerbox` -- Orange box for disclaimers and caveats.
-- `reportbox` -- Blue box for key findings and takeaways.
+- `reportbox` -- Neutral highlight box (gray background, dark left bar) for key findings and takeaways.
 - `docquote` -- Left-bordered block for quoting source documents with attribution.
 
 ### Tables and Figures
