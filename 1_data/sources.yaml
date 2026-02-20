@@ -1,0 +1,13 @@
+# Data Sources
+# Document every raw data file in this folder.
+# This file is the single source of truth for data provenance.
+
+# Example:
+# - file: survey_results.csv
+#   origin: "EPFL internal survey platform"
+#   url: "https://example.com/export"
+#   accessed: 2026-01-15
+#   description: "Raw survey responses, 1200 respondents, 25 questions"
+#   format: CSV
+#   encoding: utf-8
+#   notes: "Exported with all optional fields included"

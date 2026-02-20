@@ -1,0 +1,49 @@
+---
+title: "Presentation Title"
+subtitle: "Subtitle"
+author: "Author Name"
+institute: "Institution"
+date: today
+format:
+  beamer:
+    theme: metropolis
+    fontsize: 10pt
+    aspectratio: 169
+    # Uncomment to customize:
+    # header-includes:
+    #   - \usepackage{booktabs}
+---
+
+```{python}
+#| echo: false
+from helpers import load_analysis, load_figure
+```
+
+## Context
+
+- What is the project about?
+- What question are we answering?
+
+## Data
+
+```{python}
+#| echo: false
+# data = load_analysis("example_analysis")
+# print(f"Dataset: {data['n_results']} records")
+```
+
+- Describe data sources
+- Describe transformations
+
+## Key Findings
+
+```{python}
+#| echo: false
+# data = load_analysis("example_analysis")
+# print(data["interpretation"])
+```
+
+## Conclusion
+
+- Summary of findings
+- Next steps
