@@ -32,16 +32,37 @@ The project is organized into 5 stages. Data flows forward only — never skip a
 
 **Goal**: Define the project before writing any code.
 
-Before starting, help the user clarify:
-1. **Objective**: What question are we answering? Who is the audience?
-2. **Input data**: What data do we need? Where does it come from?
-3. **Transformations**: What cleaning, normalization, or enrichment is needed?
-4. **Analyses**: What queries/calculations will answer the question?
-5. **Output format**: Report? Slides? Dashboard? What structure?
+**How to detect you're in Stage 0**: Check `0_plan/plan.md`. If it still contains placeholder text (italicized prompts like _What question are we answering?_), the plan is incomplete. Also check whether `2_db/project.duckdb` exists — if not, the project hasn't moved past planning.
 
-Record the plan in `0_plan/plan.md`. Record key decisions (and their rationale) in `0_plan/decisions.md` throughout the project.
+### Two phases
 
-**When to update the plan**: If the analysis reveals that the original plan doesn't work (wrong data, unexpected results), update `plan.md` and log the decision in `decisions.md`.
+#### Phase 1: Brainstorming (free-form)
+
+The user may open multiple conversations to explore ideas. During this phase:
+
+- Engage naturally. Help the user think through their project idea.
+- Ask clarifying questions, suggest approaches, challenge assumptions.
+- **Don't pressure to fill in `plan.md`** — the user is still thinking.
+- **Don't try to record everything** — conversations are ephemeral by design. The user will start fresh sessions and that's fine.
+
+#### Phase 2: Consolidation (structured)
+
+When the user signals they're ready — or when you sense the idea is mature enough — switch to consolidation:
+
+1. **Summarize** your understanding of the project in a few sentences.
+2. **Ask for confirmation**: "Does this overall direction look right?"
+3. **Once confirmed**, read `0_plan/plan.md` and systematically identify which sections are still empty or placeholder.
+4. **Ask targeted questions** for each gap — don't ask everything at once, go section by section.
+5. **Fill in `plan.md`** with the agreed answers.
+
+The user can trigger consolidation explicitly (e.g., "let's finalize the plan") or you can suggest it when the conversation has covered enough ground.
+
+### Files
+
+- `plan.md` — The project plan. Starts as a template; complete it during Phase 2.
+- `decisions.md` — Decision log. Update throughout the project (not just Stage 0).
+
+**When to update the plan**: If later stages reveal that the original plan doesn't work (wrong data, unexpected results), update `plan.md` and log the decision in `decisions.md`.
 
 ---
 
