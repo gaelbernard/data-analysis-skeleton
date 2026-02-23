@@ -1,6 +1,6 @@
 % =============================================================================
-%  Slides Preamble — minimal, modern, corporate Beamer customization
-%  A clean grayscale theme with a single EPFL red accent line.
+%  Slides Preamble — modern, minimal Beamer customization
+%  Clean grayscale design with generous whitespace and editorial layout.
 %  Reference via include-in-header in the Quarto YAML.
 % =============================================================================
 
@@ -14,19 +14,29 @@
 \usepackage{booktabs}
 
 % ---------------------------------------------------------------------------
-%  Fonts — Helvetica Neue for a crisp, modern look
+%  Fonts — Helvetica Neue, crisp and modern
 % ---------------------------------------------------------------------------
-\setsansfont[Scale=0.92, BoldFont={Helvetica Neue Bold}]{Helvetica Neue}
+\setsansfont[
+  Scale=0.92,
+  BoldFont={Helvetica Neue Bold},
+  ItalicFont={Helvetica Neue Italic},
+  BoldItalicFont={Helvetica Neue Bold Italic},
+  FontFace={l}{n}{Helvetica Neue Light},
+]{Helvetica Neue}
 \renewcommand{\familydefault}{\sfdefault}
 
+% Light font command for subtitles and secondary text
+\newcommand{\lightfont}{\fontseries{l}\selectfont}
+
 % ---------------------------------------------------------------------------
-%  Colors — mostly grayscale; EPFL red used very sparingly
+%  Colors — pure grayscale palette
 % ---------------------------------------------------------------------------
 \definecolor{cleanblack}{HTML}{1A1A1A}
 \definecolor{cleandark}{HTML}{333333}
-\definecolor{cleanmid}{HTML}{888888}
-\definecolor{cleanlight}{HTML}{CCCCCC}
-\definecolor{cleanpale}{HTML}{F5F5F5}
+\definecolor{cleanmid}{HTML}{999999}
+\definecolor{cleanlight}{HTML}{D0D0D0}
+\definecolor{cleanpale}{HTML}{F2F2F2}
+\definecolor{cleanfaint}{HTML}{F8F8F8}
 \definecolor{epflred}{HTML}{FF0000}
 
 \setbeamercolor{normal text}{fg=cleanblack, bg=white}
@@ -43,20 +53,20 @@
 \setbeamercolor{date}{fg=cleanmid}
 
 \setbeamercolor{block title}{fg=cleanblack, bg=cleanpale}
-\setbeamercolor{block body}{fg=cleandark, bg=cleanpale}
+\setbeamercolor{block body}{fg=cleandark, bg=cleanfaint}
 
 \setbeamercolor{item}{fg=cleandark}
 \setbeamercolor{subitem}{fg=cleanmid}
 
 \setbeamercolor{footnote}{fg=cleanmid}
-\setbeamercolor{page number in head/foot}{fg=cleanmid}
+\setbeamercolor{page number in head/foot}{fg=cleanlight}
 
 % ---------------------------------------------------------------------------
-%  Fonts
+%  Beamer fonts
 % ---------------------------------------------------------------------------
-\setbeamerfont{title}{size=\Large, series=\bfseries}
+\setbeamerfont{title}{size=\LARGE, series=\bfseries}
 \setbeamerfont{subtitle}{size=\normalsize}
-\setbeamerfont{author}{size=\normalsize}
+\setbeamerfont{author}{size=\small}
 \setbeamerfont{institute}{size=\small}
 \setbeamerfont{date}{size=\small}
 \setbeamerfont{frametitle}{size=\large, series=\bfseries}
@@ -65,88 +75,85 @@
 \setbeamerfont{page number in head/foot}{size=\scriptsize}
 
 % ---------------------------------------------------------------------------
-%  Remove all default Beamer decorations
+%  Remove all default Beamer chrome
 % ---------------------------------------------------------------------------
 \setbeamertemplate{navigation symbols}{}
 \setbeamertemplate{headline}{}
 
-% Itemize: clean dashes and dots
-\setbeamertemplate{itemize item}{\textcolor{cleandark}{\raisebox{0.18ex}{\rule{0.5em}{0.5pt}}}}
-\setbeamertemplate{itemize subitem}{\textcolor{cleanmid}{\raisebox{0.25ex}{\tiny$\bullet$}}}
-\setbeamertemplate{itemize subsubitem}{\textcolor{cleanlight}{\raisebox{0.25ex}{\tiny$\bullet$}}}
+% Itemize: minimal circle bullets
+\setbeamertemplate{itemize item}{\textcolor{cleanmid}{\raisebox{0.22ex}{\tiny$\bullet$}}}
+\setbeamertemplate{itemize subitem}{\textcolor{cleanlight}{\raisebox{0.22ex}{\scalebox{0.6}{\tiny$\bullet$}}}}
+\setbeamertemplate{itemize subsubitem}{\textcolor{cleanlight}{\raisebox{0.22ex}{\scalebox{0.6}{\tiny$\bullet$}}}}
+
+% Wider item separation for breathing room
+\setlength{\itemsep}{6pt plus 2pt minus 1pt}
 
 % Enumerate: simple numbers
 \setbeamertemplate{enumerate items}[default]
 
 % ---------------------------------------------------------------------------
-%  Footline — page number only, right-aligned
+%  Footline — subtle page number, right-aligned
 % ---------------------------------------------------------------------------
 \setbeamertemplate{footline}{%
   \hfill%
   \usebeamerfont{page number in head/foot}%
   \usebeamercolor[fg]{page number in head/foot}%
-  \insertframenumber\kern1.2em\vskip0.8em%
+  \insertframenumber\kern1.5em\vskip0.9em%
 }
 
 % ---------------------------------------------------------------------------
-%  Frame title — clean text with a thin rule underneath
+%  Frame title — bold text, generous whitespace, no rule
 % ---------------------------------------------------------------------------
 \setbeamertemplate{frametitle}{%
-  \vskip0.6em%
+  \vskip0.8em%
   \usebeamerfont{frametitle}\usebeamercolor[fg]{frametitle}\insertframetitle%
   \ifx\insertframesubtitle\@empty\else
-    \\[0.15em]%
+    \\[0.2em]%
     \usebeamerfont{framesubtitle}\usebeamercolor[fg]{framesubtitle}\insertframesubtitle%
   \fi
-  \vskip0.35em%
-  {\color{cleanlight}\rule{\textwidth}{0.4pt}}%
-  \vskip0.3em%
+  \vskip0.6em%
 }
 
 % ---------------------------------------------------------------------------
-%  Title page — EPFL logo, centered title, thin accent lines
+%  Title page — editorial layout with right-side accent panel
 % ---------------------------------------------------------------------------
 \newcommand{\slidelogopath}{templates/slides/epfl_logo.png}
 
 \setbeamertemplate{title page}{%
+  % Background: light gray panel on the right
   \begin{tikzpicture}[remember picture, overlay]
-    % Thin red accent line near top
-    \fill[epflred] ([yshift=-0.7cm]current page.north west) rectangle
-                   ([yshift=-0.74cm]current page.north east);
-    % Thin red accent line near bottom
-    \fill[epflred] ([yshift=0.5cm]current page.south west) rectangle
-                   ([yshift=0.54cm]current page.south east);
+    \fill[cleanpale]
+      ([xshift=0.62\paperwidth]current page.south west) rectangle
+      (current page.north east);
   \end{tikzpicture}%
   %
-  \vskip1.0cm%
+  % EPFL logo — top left
+  \vskip0.3cm%
+  \hspace{0.5cm}\includegraphics[width=2.6cm]{\slidelogopath}%
   %
-  % Logo centered
-  \begin{center}
-    \includegraphics[width=3.2cm]{\slidelogopath}%
-  \end{center}
+  \vskip1.4cm%
   %
-  \vskip0.6cm%
-  %
-  % Title block
-  \begin{center}
+  % Title and subtitle — left-aligned in the left 55%
+  \hspace{0.5cm}%
+  \begin{minipage}[t]{0.52\paperwidth}
+    \raggedright
     \usebeamerfont{title}\usebeamercolor[fg]{title}\inserttitle\par%
-    \vskip0.4cm%
-    {\color{cleanlight}\rule{0.3\paperwidth}{0.4pt}}\par%
-    \vskip0.4cm%
-    \usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par%
-  \end{center}
+    \vskip0.5cm%
+    {\lightfont\usebeamercolor[fg]{subtitle}\insertsubtitle\par}%
+  \end{minipage}%
   %
   \vfill%
   %
-  % Author block
-  \begin{center}
+  % Author block — bottom left
+  \hspace{0.5cm}%
+  \begin{minipage}[b]{0.52\paperwidth}
+    \raggedright
     \usebeamerfont{author}\usebeamercolor[fg]{author}\insertauthor\par%
-    \vskip0.2cm%
-    \usebeamerfont{institute}\usebeamercolor[fg]{institute}\insertinstitute\par%
     \vskip0.15cm%
-    \usebeamerfont{date}\usebeamercolor[fg]{date}\insertdate\par%
-  \end{center}
-  %
+    {\lightfont\usebeamercolor[fg]{institute}\insertinstitute\par}%
+    \vskip0.3cm%
+    {\lightfont\usebeamercolor[fg]{date}\insertdate\par}%
+  \end{minipage}%
   \vskip0.8cm%
 }
 
@@ -157,40 +164,30 @@
 \makeatother
 
 % ---------------------------------------------------------------------------
-%  Section page — clean centered section title (between thin accent lines)
+%  Section page — large centered section name, clean and spacious
 % ---------------------------------------------------------------------------
 \AtBeginSection[]{%
   \begin{frame}[plain,noframenumbering]
-    \begin{tikzpicture}[remember picture, overlay]
-      \fill[epflred] ([yshift=-0.7cm]current page.north west) rectangle
-                     ([yshift=-0.74cm]current page.north east);
-      \fill[epflred] ([yshift=0.5cm]current page.south west) rectangle
-                     ([yshift=0.54cm]current page.south east);
-    \end{tikzpicture}%
     \vfill%
     \begin{center}
-      {\Large\bfseries\color{cleanblack}\insertsectionhead\par}%
-      \vskip0.4cm%
-      {\color{cleanlight}\rule{0.2\paperwidth}{0.4pt}}%
+      {\LARGE\bfseries\color{cleanblack}\insertsectionhead\par}%
     \end{center}
     \vfill%
   \end{frame}
 }
 
 % ---------------------------------------------------------------------------
-%  Block environments — clean flat style
+%  Block environments — flat, borderless
 % ---------------------------------------------------------------------------
 \setbeamertemplate{block begin}{%
-  \vskip0.4em%
+  \vskip0.5em%
   {\usebeamerfont{block title}\usebeamercolor[fg]{block title}\insertblocktitle}\par%
-  \vskip0.2em%
-  {\color{cleanlight}\rule{\textwidth}{0.3pt}}%
   \vskip0.3em%
   \usebeamercolor[fg]{block body}%
 }
-\setbeamertemplate{block end}{\vskip0.4em}
+\setbeamertemplate{block end}{\vskip0.5em}
 
 % ---------------------------------------------------------------------------
-%  Figure paths — look in templates/slides/ for images
+%  Figure paths
 % ---------------------------------------------------------------------------
 \graphicspath{{templates/slides/}{templates/report/}}
