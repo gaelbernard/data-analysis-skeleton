@@ -2,7 +2,10 @@
 # Document every raw data file in this folder.
 # This file is the single source of truth for data provenance.
 
-# Example:
+# ── Actual data sources (add yours below) ─────────────────────
+[]
+
+# ── Example entries ───────────────────────────────────────────
 # - file: survey_results.csv
 #   origin: "EPFL internal survey platform"
 #   url: "https://example.com/export"
@@ -23,6 +26,3 @@
 #   encoding: ""
 #   confidential: false
 #   notes: "Provenance uncertain — verify with Jean before publishing"
-
-# ── Actual data sources (add yours below) ─────────────────────
-[]

@@ -1,117 +1,68 @@
 # Data Analysis Skeleton
 
-A reusable project structure for data analysis projects. Each stage has its own folder, and data flows forward through a clear pipeline:
+A structured pipeline for data analysis projects. Data flows forward through five stages:
 
 ```
 0_plan  →  1_data  →  2_db  →  3_analyses  →  4_output
-(plan)    (collect)  (transform) (analyze)    (report)
 ```
 
-## Stages
-
-| Folder | Input | Output | Purpose |
-|--------|-------|--------|---------|
-| `0_plan/` | Your brain + LLM | `plan.md`, `decisions.md` | Define objectives, data sources, methods, output format |
-| `1_data/` | External sources | Raw files + `sources.yaml` | Collect and document all raw data |
-| `2_db/` | `1_data/*` | `project.duckdb` + `schema.md` | Clean, transform, normalize → single DuckDB |
-| `3_analyses/` | `2_db/project.duckdb` | JSON + optional figures per subfolder | Run SQL queries, interpret results, generate figures |
-| `4_output/` | `3_analyses/*/results.json` | PDF report, slides, etc. | Write the final deliverable with Quarto |
-
-## Prerequisites
-
-- **Python 3.10+**
-- **Quarto** ([quarto.org](https://quarto.org/docs/get-started/)): needed for rendering reports and slides in `4_output/`.
-- **LuaLaTeX**: the report template uses `lualatex` as the PDF engine. Install a TeX distribution (e.g., TeX Live or MacTeX).
-- **Helvetica Neue** font: used by the report preamble. Pre-installed on macOS; on Linux, install `texlive-fonts-extra` or substitute in `preamble.tex`.
-
-## Quick Start
+## Getting Started
 
 ```bash
 pip install -r requirements.txt
 cp .env.example .env       # fill in your API keys
 ```
 
-Then follow the pipeline: plan → collect data → build DB → run analyses → render output.
+## What to Do at Each Stage
+
+### 0. Plan (`0_plan/`)
+
+Define your project before writing any code. Open a conversation with the AI, brainstorm your idea, then say "let's finalize the plan" to fill in `plan.md`. Done when every section has real content.
+
+→ See [`0_plan/README.md`](0_plan/README.md)
+
+### 1. Collect Data (`1_data/`)
+
+Gather the raw data listed in your plan. Drop files here and document each one in `sources.yaml`. Never modify raw files after collection. Done when every planned source has a file and a `sources.yaml` entry.
+
+→ See [`1_data/README.md`](1_data/README.md)
+
+### 2. Build the Database (`2_db/`)
+
+Transform raw data into a clean DuckDB. Edit `build_db.py`, then run `make db`. The script reads from `1_data/`, applies all transformations, and produces `project.duckdb` + `schema.md`. Done when the DB builds cleanly and the schema looks right.
+
+→ See [`2_db/README.md`](2_db/README.md)
+
+### 3. Analyze (`3_analyses/`)
+
+Answer your research questions. Each analysis lives in its own subfolder with a `run.py` that queries the DB and writes a `results.json`. The AI will propose a first batch based on your plan. Run all with `make analyses`. Done when every question from the plan has a valid `results.json`.
+
+→ See [`3_analyses/README.md`](3_analyses/README.md)
+
+### 4. Produce Output (`4_output/`)
+
+Write the final report, slides, or dashboard in Quarto. All numbers come from `3_analyses/` via `helpers.py` (never hardcode). Render with `make render d=<folder>` or `make outputs`.
+
+→ See [`4_output/README.md`](4_output/README.md)
+
+## Make Commands
 
 ```bash
-make db              # Build the DuckDB from 1_data/
-make analyses        # Run all analysis scripts in 3_analyses/
-make report          # Render the Quarto report
-make slides          # Render the Quarto slides
-make all             # Run everything in order
-make skeleton-sync msg="..."  # Commit + push skeleton improvements
+make db                         # Build the DuckDB from 1_data/
+make analyses                   # Run all analysis scripts
+make render d=<folder>          # Render a specific deliverable in 4_output/
+make outputs                    # Render all deliverables
+make all                        # Full pipeline: db → analyses → outputs
+make clean                      # Remove generated files
+make skeleton-sync msg="..."    # Commit + push skeleton improvements
 ```
 
-## Key Rules
+## Prerequisites
 
-1. **Data flows forward only**: `1_data → 2_db → 3_analyses → 4_output`. Never skip a stage.
-2. **Never hardcode numbers in reports**: load everything from JSON files in `3_analyses/`.
-3. **DuckDB is read-only in `3_analyses/`**: the DB is only modified in `2_db/`.
-4. **One subfolder per analysis** in `3_analyses/`: each has a `run.py` + `results.json` + optional `figures/`.
-5. **Figures use the same data as their JSON** (or a subset, never more).
-6. **Document data sources** in `1_data/sources.yaml`.
-7. **API keys** go in `.env` (never committed). See `.env.example` for the template.
+- Python 3.10+
+- [Quarto](https://quarto.org/docs/get-started/) (for rendering reports/slides)
+- LuaLaTeX (e.g., TeX Live or MacTeX)
 
-## How to Use This Skeleton
+## Skeleton Management
 
-### Starting a New Project
-
-1. Clone the skeleton:
-```bash
-git clone https://github.com/YOUR_USERNAME/data-analysis-skeleton.git my-new-project
-cd my-new-project
-```
-
-2. Rename the skeleton remote (keeps the link for future backporting):
-```bash
-git remote rename origin skeleton
-```
-
-3. Create a new GitHub repo for your project (e.g., `my-new-project`), then:
-```bash
-git remote add origin https://github.com/YOUR_USERNAME/my-new-project.git
-git push -u origin main
-```
-
-Now your project has two remotes:
-- `origin` → your project's repo (where all your work goes)
-- `skeleton` → the skeleton template repo (for backporting improvements)
-
-4. Set up the environment:
-```bash
-pip install -r requirements.txt
-cp .env.example .env   # edit with your actual API keys
-```
-
-5. Start with `0_plan/plan.md` — fill in your objectives, data sources, and plan.
-
-### During a Project: Improving the Skeleton
-
-Sometimes you'll improve something generic (a better `agents.md` rule, a `Makefile` tweak, a better template). When you do, stage the files and use `make skeleton-sync`:
-
-```bash
-git add agents.md
-make skeleton-sync msg="add rule about figure naming convention"
-```
-
-This will:
-1. Commit the staged files to your project with a `[skeleton]` prefix.
-2. If the `skeleton` remote is configured, automatically cherry-pick the commit and push it there.
-3. If no `skeleton` remote exists, it commits locally (you can backport later).
-
-The AI agent follows this same workflow automatically when it modifies skeleton files.
-
-### Pulling Skeleton Updates into a Running Project
-
-If you improved the skeleton (from another project) and want to pull those updates:
-
-```bash
-git fetch skeleton
-git merge skeleton/main --allow-unrelated-histories
-```
-
-Resolve any conflicts if needed, then continue working.
-
-## For the AI Agent
-
-See `agents.md` for the full pipeline philosophy and rules. The LLM agent should read it before starting any work.
+This project is based on a reusable template. To backport improvements or pull updates, see [`SKELETON.md`](SKELETON.md).

@@ -28,4 +28,6 @@ When you're ready, tell the LLM: "let's finalize the plan." It will:
 
 ## When is Stage 0 done?
 
-When every section of `plan.md` has real content (no more italic placeholder prompts) and you feel confident about the direction. Then move to `1_data/`.
+When every section of `plan.md` has real content (no more italic placeholder prompts) and you feel confident about the direction.
+
+**Before moving on**: review `plan.md` carefully. Make sure the research questions are clear, the data sources are realistic, and the planned analyses actually answer the questions. This is the cheapest point to catch problems. Once you start collecting data and writing code, changing direction gets expensive. Then move to `1_data/`.

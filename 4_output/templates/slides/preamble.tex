@@ -178,6 +178,36 @@
 }
 
 % ---------------------------------------------------------------------------
+%  Disclaimer box (amber/orange) — flag caveats about data, AI, methodology.
+%  Mirrors the report disclaimerbox but sized for slides.
+%  Usage: \begin{disclaimerbox}[Disclaimer]
+% ---------------------------------------------------------------------------
+\usepackage{tcolorbox}
+\tcbuselibrary{skins, breakable}
+
+\definecolor{disclaimerbg}{HTML}{FFF8E1}
+\definecolor{disclaimerbar}{HTML}{F0A830}
+\definecolor{disclaimertitle}{HTML}{5D4037}
+
+\newtcolorbox{disclaimerbox}[1][]{
+  enhanced,
+  colback=disclaimerbg,
+  colframe=disclaimerbg,
+  borderline west={3pt}{0pt}{disclaimerbar},
+  arc=0pt,
+  boxrule=0.4pt,
+  colbacktitle=disclaimerbg,
+  coltitle=disclaimertitle,
+  fonttitle=\bfseries\small,
+  toptitle=4pt,
+  bottomtitle=3pt,
+  top=4pt, bottom=6pt, left=8pt, right=8pt,
+  before skip=0.6em,
+  after skip=0.6em,
+  title={#1},
+}
+
+% ---------------------------------------------------------------------------
 %  Block environments — flat, borderless
 % ---------------------------------------------------------------------------
 \setbeamertemplate{block begin}{%

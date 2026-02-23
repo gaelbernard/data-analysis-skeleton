@@ -15,7 +15,7 @@ format:
 ```{python}
 #| echo: false
 import sys; sys.path.insert(0, "..")
-from helpers import load_analysis, load_figure
+from helpers import load_analysis, load_figure, load_value
 
 # Use Plotly CDN instead of embedding the full library (~3.5MB) inline
 import plotly.io as pio

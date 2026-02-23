@@ -364,7 +364,7 @@ The `templates/dashboard.qmd` template produces an interactive HTML dashboard. F
 5. **Disclaimer**: Include an "About" page with a `.disclaimer-box` div for data caveats (mirrors the report/slides disclaimer boxes).
 6. **No hardcoded numbers**: Same golden rule as reports. Every number comes from `results.json`.
 7. **Interactive plots**: Since dashboards are HTML, prefer interactive libraries (plotly, altair) over static matplotlib when it adds value.
-8. **CSS theme**: The `templates/dashboard/style.css` provides a grayscale theme matching the report and slides aesthetic. The theme path in the YAML uses `templates/dashboard/style.css` (relative to `4_output/`, resolved at render time from the deliverable subfolder).
+8. **CSS theme**: The `templates/dashboard/style.css` provides a modern, colorful theme (indigo navbar, tinted accents, clean cards). The theme path in the YAML uses `templates/dashboard/style.css` (relative to `4_output/`, resolved at render time from the deliverable subfolder).
 
 When creating a dashboard deliverable, update the theme path in the YAML to point correctly from the subfolder:
 ```yaml
@@ -376,7 +376,7 @@ theme: [default, ../templates/dashboard/style.css]
 - `templates/report/preamble.tex` — LaTeX preamble with colors, tcolorbox environments (`disclaimerbox`, `reportbox`, `docquote`), and package imports.
 - `templates/report/titlepage.tex` — Default title page (copy into each report deliverable subfolder and customize).
 - `templates/slides/preamble.tex` — Beamer preamble with modern minimal theme, plus `disclaimerbox` environment.
-- `templates/dashboard/style.css` — CSS theme for dashboards, matching the grayscale palette of report and slides.
+- `templates/dashboard/style.css` — CSS theme for dashboards with a modern, colorful design (indigo navbar, tinted value box accents, clean card layout).
 - `templates/dashboard/epfl_logo.png` — Logo for the dashboard navbar.
 
 Reusable template improvements should be committed with `make skeleton-sync`.

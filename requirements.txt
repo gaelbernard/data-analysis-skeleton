@@ -1,4 +1,5 @@
-duckdb
-pandas
-matplotlib
-python-dotenv
+duckdb>=0.9
+pandas>=2.0
+matplotlib>=3.7
+plotly>=5.15
+python-dotenv>=1.0
