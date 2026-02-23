@@ -3,3 +3,5 @@ pandas>=2.0
 matplotlib>=3.7
 plotly>=5.15
 python-dotenv>=1.0
+pyyaml>=6.0
+itables>=2.0

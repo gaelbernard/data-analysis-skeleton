@@ -53,5 +53,6 @@ output = {
     # "figures": [{"file": "figures/bar_chart.pdf", "caption": "Top categories"}],
 }
 
-json.dump(output, open("results.json", "w"), indent=2, ensure_ascii=False)
+with open("results.json", "w") as f:
+    json.dump(output, f, indent=2, ensure_ascii=False)
 print(f"✓ {len(df)} results → results.json")

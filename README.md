@@ -48,6 +48,7 @@ Write the final report, slides, or dashboard in Quarto. All numbers come from `3
 ## Make Commands
 
 ```bash
+make status                     # Show pipeline status and validation
 make db                         # Build the DuckDB from 1_data/
 make analyses                   # Run all analysis scripts
 make render d=<folder>          # Render a specific deliverable in 4_output/

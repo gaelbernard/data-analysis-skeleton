@@ -25,7 +25,8 @@ The project is organized into 5 stages. Data flows forward only — never skip a
 - **API keys**: Never hardcode API keys. Use a `.env` file with `python-dotenv`. See `.env.example` for the template.
 - **Dependencies**: All Python dependencies go in `requirements.txt` at the root.
 - **Skeleton improvements**: When you modify a generic file that could benefit future projects (agents.md, Makefile, helpers.py, templates, READMEs), stage the files and run `make skeleton-sync msg="description"`. This commits with a `[skeleton]` prefix and automatically pushes the change to the skeleton remote (if configured). Example: `git add agents.md && make skeleton-sync msg="improve JSON schema documentation"`.
-- **Stage gates**: Before starting work in any stage, verify that prerequisite stages are complete. If `plan.md` still has placeholders, don't start collecting data. If `sources.yaml` is missing entries for files in `1_data/`, don't build the DB or run analyses. If documentation or provenance is unclear, **stop and ask the user to fill the gaps before proceeding**. Never skip a stage just because the user is eager to move forward.
+- **Pipeline status**: Run `make status` (or `python status.py`) at the start of any conversation to instantly see which stages are complete, which have issues, and what the next action should be. This is faster and more reliable than manually checking files.
+- **Stage gates**: Before starting work in any stage, verify that prerequisite stages are complete (use `make status`). If `plan.md` still has placeholders, don't start collecting data. If `sources.yaml` is missing entries for files in `1_data/`, don't build the DB or run analyses. If documentation or provenance is unclear, **stop and ask the user to fill the gaps before proceeding**. Never skip a stage just because the user is eager to move forward.
 - **Writing style**: Never use em dashes (--) in reports, slides, or any written output. Use commas, parentheses, colons, or separate sentences instead.
 
 ---
@@ -250,7 +251,7 @@ A single project may have multiple deliverables (e.g. a short report, a full rep
       preamble.tex
       epfl_logo.png
     dashboard/                      # shared assets for dashboards
-      style.css                     # grayscale theme matching report/slides design
+      style.css                     # modern colorful theme (indigo navbar, tinted accents, clean cards)
       epfl_logo.png
   2026-02-18-short-report/          # ← real deliverable (example)
     report.qmd
@@ -401,6 +402,7 @@ cd 4_output/2026-02-18-short-report && quarto render report.qmd
 The `Makefile` at the root provides shortcuts:
 
 ```bash
+make status                          # Show pipeline status and validation
 make db                              # Rebuild DuckDB from 1_data/
 make analyses                        # Run all run.py scripts in 3_analyses/
 make render d=2026-02-18-report      # Render a specific deliverable in 4_output/

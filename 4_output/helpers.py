@@ -66,7 +66,8 @@ def load_analysis(name):
             f"Analysis '{name}' not found at {p}. "
             f"Run: cd 3_analyses/{name} && python run.py"
         )
-    data = json.load(open(p))
+    with open(p) as f:
+        data = json.load(f)
     validate_results(data, name)
     return data
 
@@ -84,10 +85,18 @@ def load_value(name, column, agg="first"):
     """
     data = load_analysis(name)
     values = [row[column] for row in data["results"] if column in row]
+    n_total = len(data["results"])
+    n_found = len(values)
     if not values:
         raise KeyError(
             f"Column '{column}' not found in analysis '{name}'. "
             f"Available: {list(data['results'][0].keys()) if data['results'] else '(empty)'}"
+        )
+    if n_found < n_total:
+        import warnings
+        warnings.warn(
+            f"Column '{column}' missing in {n_total - n_found}/{n_total} rows "
+            f"of analysis '{name}'. Aggregation uses only {n_found} rows."
         )
     if agg == "first":
         return values[0]

@@ -2,6 +2,7 @@
 # Makefile — Data Analysis Pipeline
 # ============================================================================
 # Usage:
+#   make status          Show pipeline status and validation
 #   make db              Build the DuckDB database from raw data in 1_data/
 #   make analyses        Run all analysis scripts in 3_analyses/
 #   make render d=<dir>  Render a specific deliverable in 4_output/<dir>
@@ -11,16 +12,23 @@
 #   make skeleton-sync msg="..."  Commit + push skeleton improvements
 # ============================================================================
 
+# Use python3 explicitly (macOS ships without 'python')
+PYTHON ?= python3
+
+# Show pipeline status and validation
+status:
+	@$(PYTHON) status.py
+
 # Build the DuckDB database
 db:
-	python 2_db/build_db.py
+	$(PYTHON) 2_db/build_db.py
 
 # Run every run.py found in 3_analyses/ subfolders
 analyses:
 	@for dir in 3_analyses/*/; do \
 		if [ -f "$$dir/run.py" ]; then \
 			echo "▶ Running $$dir"; \
-			(cd "$$dir" && python run.py); \
+			(cd "$$dir" && $(PYTHON) run.py); \
 		fi; \
 	done
 
@@ -101,4 +109,4 @@ skeleton-sync:
 		echo "  To set up: git remote add skeleton <skeleton-repo-url>"; \
 	fi
 
-.PHONY: db analyses render outputs all clean skeleton-sync
+.PHONY: status db analyses render outputs all clean skeleton-sync
