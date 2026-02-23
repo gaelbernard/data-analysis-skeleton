@@ -28,6 +28,7 @@ The project is organized into 5 stages. Data flows forward only — never skip a
 - **Pipeline status**: Run `make status` (or `python status.py`) at the start of any conversation to instantly see which stages are complete, which have issues, and what the next action should be. This is faster and more reliable than manually checking files.
 - **Stage gates**: Before starting work in any stage, verify that prerequisite stages are complete (use `make status`). If `plan.md` still has placeholders, don't start collecting data. If `sources.yaml` is missing entries for files in `1_data/`, don't build the DB or run analyses. If documentation or provenance is unclear, **stop and ask the user to fill the gaps before proceeding**. Never skip a stage just because the user is eager to move forward.
 - **Writing style**: Never use em dashes (--) in reports, slides, or any written output. Use commas, parentheses, colons, or separate sentences instead.
+- **When in doubt, ask.** You are a collaborator, not an autopilot. If something is ambiguous, if you need to make a judgment call that could go either way, or if you're about to silently discard or transform data, stop and ask the user. It is always better to ask one question too many than to make a wrong assumption that propagates through the pipeline. Never guess on decisions that affect data quality, analysis scope, or interpretation.
 
 ---
 
@@ -103,7 +104,15 @@ Every data source listed in the plan has a corresponding file in `1_data/` and a
 
 **Goal**: Transform raw data into a clean, queryable DuckDB database.
 
-Rules:
+### What the agent should do
+
+1. **Read the plan and data**: Start by reading `0_plan/plan.md` and inspecting the files in `1_data/` to understand what's expected.
+2. **Flag data quality issues**: If you notice duplicates, missing values, encoding problems, or unexpected formats, report them to the user before silently cleaning them. Ask how they want to handle each issue.
+3. **Confirm naming and structure**: If column names in the raw data are ambiguous, or if you need to decide how to normalize or split tables, propose your approach and ask for confirmation.
+4. **Document decisions**: Log any non-trivial transformation choices in `0_plan/decisions.md`.
+
+### Rules
+
 - The output is always a single file: `project.duckdb`.
 - The build script is `build_db.py`. It reads from `1_data/`, applies all transformations, and writes the DuckDB.
 - Transformations include: importing raw files, cleaning text, normalizing values, computing derived columns (embeddings, categories, etc.), creating lookup tables.
