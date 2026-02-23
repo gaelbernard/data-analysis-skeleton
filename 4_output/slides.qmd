@@ -2,16 +2,21 @@
 title: "Presentation Title"
 subtitle: "Subtitle"
 author: "Author Name"
-institute: "Institution"
+institute: "EPFL"
 date: today
+date-format: "D MMMM YYYY"
 format:
   beamer:
-    theme: metropolis
+    theme: default
+    colortheme: default
     fontsize: 10pt
     aspectratio: 169
-    # Uncomment to customize:
-    # header-includes:
-    #   - \usepackage{booktabs}
+    pdf-engine: lualatex
+    section-titles: false
+    include-in-header:
+      - templates/slides/preamble.tex
+    fig-pos: "H"
+    keep-tex: true
 ---
 
 ```{python}
