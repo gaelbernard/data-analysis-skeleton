@@ -18,9 +18,11 @@ format:
       - left=25mm
       - right=25mm
     include-in-header:
-      - templates/report/preamble.tex
+      - ../templates/report/preamble.tex
     include-before-body:
-      - templates/report/titlepage.tex
+      - titlepage.tex
+    header-includes:
+      - \graphicspath{{../templates/report/}{./}}
     toc: true
     toc-depth: 2
     number-sections: true
@@ -34,6 +36,7 @@ format:
 
 ```{python}
 #| echo: false
+import sys; sys.path.insert(0, "..")
 from helpers import load_analysis, load_figure
 ```
 

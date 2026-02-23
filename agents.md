@@ -227,28 +227,73 @@ Every analysis question listed in the plan has a corresponding subfolder with a 
 
 ## Stage 4: Output (`4_output/`)
 
-**Goal**: Produce the final deliverable (report, slides, etc.) using Quarto.
+**Goal**: Produce final deliverables (reports, slides, etc.) using Quarto.
 
-**How to detect you're in Stage 4**: The user signals that analyses are sufficient and they want to produce the deliverable (e.g., "let's create the report", "I think we have enough data for the slides"). `3_analyses/` has subfolders with valid `results.json` files.
+A single project may have multiple deliverables (e.g. a short report, a full report, preliminary slides, final slides). Each deliverable lives in its own **dated subfolder** inside `4_output/`.
+
+**How to detect you're in Stage 4**: The user signals that analyses are sufficient and they want to produce a deliverable (e.g., "let's create the report", "I think we have enough data for the slides"). `3_analyses/` has subfolders with valid `results.json` files.
+
+### Directory Structure
+
+```
+4_output/
+  helpers.py                        # shared Python helper (at root)
+  templates/
+    report.qmd                      # starter Quarto template for reports
+    slides.qmd                      # starter Quarto template for slides
+    report/                         # shared LaTeX files for reports
+      preamble.tex
+      titlepage.tex                 # default title page (copied into each deliverable)
+      epfl_logo.png
+    slides/                         # shared LaTeX files for slides
+      preamble.tex
+      epfl_logo.png
+  2026-02-18-short-report/          # ← real deliverable (example)
+    report.qmd
+    titlepage.tex                   # customized copy
+    report.pdf
+  2026-03-01-final-slides/          # ← another deliverable
+    slides.qmd
+    slides.pdf
+```
 
 ### What the agent should do
 
-1. **Ask which deliverable**: Report or slides? Don't create both at once. Start with what the user asks for. They can add the other later.
-2. **Review available data**: Read all `results.json` files in `3_analyses/` to understand what data is available. Also read `0_plan/plan.md` for context (objective, audience, output format).
-3. **Propose a structure**: Based on the available analyses and the plan, propose an outline for the report or slides. Present it to the user for confirmation.
-4. **Write the deliverable**: Fill in the `.qmd` file using `load_analysis()` and `load_figure()` to pull data from `3_analyses/`. Never hardcode numbers.
-5. **Fill gaps autonomously**: If while writing you notice simple data is missing (a count, a percentage, a breakdown derivable from the existing schema), go create a new analysis in `3_analyses/` (subfolder + `run.py`), run it, and use the results. No need to ask permission for straightforward queries. For complex or ambiguous questions, ask the user first.
-6. **Customize templates**: Update `titlepage.tex` with the project's title, author, and branding. Adjust the header text in `preamble.tex` if needed.
+1. **Ask which deliverable**: Report or slides? Don't create both at once. Start with what the user asks for.
+2. **Ask for the folder name**: Propose a name like `YYYY-MM-DD-short-description` (e.g. `2026-02-18-short-report`). If unsure, **ask the user** what to call it. Do not guess.
+3. **Create the subfolder**: Copy the appropriate template (e.g. `templates/report.qmd` or `templates/slides.qmd`) into the new subfolder. For reports, also copy `templates/report/titlepage.tex` into the subfolder.
+4. **Review available data**: Read all `results.json` files in `3_analyses/` to understand what data is available. Also read `0_plan/plan.md` for context (objective, audience, output format).
+5. **Propose a structure**: Based on the available analyses and the plan, propose an outline. Present it to the user for confirmation.
+6. **Write the deliverable**: Fill in the `.qmd` file using `load_analysis()` and `load_figure()` to pull data from `3_analyses/`. Never hardcode numbers.
+7. **Fill gaps autonomously**: If while writing you notice simple data is missing (a count, a percentage, a breakdown derivable from the existing schema), go create a new analysis in `3_analyses/` (subfolder + `run.py`), run it, and use the results. No need to ask permission for straightforward queries. For complex or ambiguous questions, ask the user first.
+8. **Customize the title page**: For reports, edit the local `titlepage.tex` with the project's title, author, and branding.
+
+### Creating a New Deliverable (step by step)
+
+```bash
+# 1. Create the subfolder
+mkdir -p 4_output/2026-02-18-short-report
+
+# 2. Copy the template
+cp 4_output/templates/report.qmd 4_output/2026-02-18-short-report/report.qmd
+
+# 3. For reports, also copy the title page
+cp 4_output/templates/report/titlepage.tex 4_output/2026-02-18-short-report/titlepage.tex
+
+# 4. Edit, then render
+make render d=2026-02-18-short-report
+```
 
 ### The Golden Rule
 
-**Never write a number directly in a Quarto document.** Every number, count, percentage, or statistic must be loaded from a `results.json` in `3_analyses/`. If the data you need doesn't exist as a JSON, go back to `3_analyses/` and create a new analysis first -- for simple, obvious queries you can do this autonomously without asking.
+**Never write a number directly in a Quarto document.** Every number, count, percentage, or statistic must be loaded from a `results.json` in `3_analyses/`. If the data you need doesn't exist as a JSON, go back to `3_analyses/` and create a new analysis first. For simple, obvious queries you can do this autonomously without asking.
 
 ### Loading Data
 
-Use `helpers.py` to load analysis data in Quarto Python chunks:
+`helpers.py` lives at the root of `4_output/`. Since each deliverable runs from a subfolder, the first Python chunk must add the parent to `sys.path`:
 
 ```python
+import sys; sys.path.insert(0, "..")
 from helpers import load_analysis, load_figure
 
 data = load_analysis("value_frequency")
@@ -259,9 +304,18 @@ data = load_analysis("value_frequency")
 fig_path = load_figure("value_frequency", "bar_chart.pdf")
 ```
 
+### Path Conventions
+
+All paths in `.qmd` files are **relative to the deliverable subfolder**:
+
+- Shared LaTeX preambles: `../templates/report/preamble.tex` or `../templates/slides/preamble.tex`
+- Local title page: `titlepage.tex` (in the same subfolder)
+- `\graphicspath` is set via `header-includes` in each `.qmd` to resolve images from `../templates/report/` (or `../templates/slides/`) and `./`.
+- Python helper: `sys.path.insert(0, "..")` then `from helpers import ...`
+
 ### Report Structure and Conventions
 
-The `report.qmd` template provides a standard structure. Follow these conventions:
+The `templates/report.qmd` template provides a standard structure. Follow these conventions:
 
 1. **Disclaimer box** (`disclaimerbox`): Start every report with an orange disclaimer box flagging data limitations, AI usage, methodological choices, and scope. Adapt the items to the project.
 2. **Executive Summary** (unnumbered): A short overview with a `reportbox` highlighting key findings.
@@ -271,22 +325,26 @@ The `report.qmd` template provides a standard structure. Follow these convention
 6. **Tables**: Use booktabs style (`\toprule`, `\midrule`, `\bottomrule`). Always include `\caption` and `\label`. Use `[H]` placement.
 7. **Figures**: Generated in `3_analyses/`, referenced via `load_figure()`. Always `[H]` placement with caption and label. Prefer PDF for vector graphics.
 
-### Templates
+### Shared Templates
 
 - `templates/report/preamble.tex` — LaTeX preamble with colors, tcolorbox environments (`disclaimerbox`, `reportbox`, `docquote`), and package imports.
-- `templates/report/titlepage.tex` — Custom title page (create per project if needed).
-- `templates/slides/` — Beamer theme files for slides.
+- `templates/report/titlepage.tex` — Default title page (copy into each report deliverable subfolder and customize).
+- `templates/slides/preamble.tex` — Beamer preamble with modern minimal theme.
 
-Customize these per project. When you create a reusable template improvement, use `make skeleton-sync` to commit and push it to the skeleton remote.
+Reusable template improvements should be committed with `make skeleton-sync`.
 
 ### Rendering
 
 ```bash
-cd 4_output && quarto render report.qmd
-cd 4_output && quarto render slides.qmd
-```
+# Render a specific deliverable
+make render d=2026-02-18-short-report
 
-Or use `make report` / `make slides` from the project root.
+# Render all deliverables
+make outputs
+
+# Or manually
+cd 4_output/2026-02-18-short-report && quarto render report.qmd
+```
 
 ---
 
@@ -295,12 +353,13 @@ Or use `make report` / `make slides` from the project root.
 The `Makefile` at the root provides shortcuts:
 
 ```bash
-make db              # Rebuild DuckDB from 1_data/
-make analyses        # Run all run.py scripts in 3_analyses/
-make report          # Render report with Quarto
-make slides          # Render slides with Quarto
-make all             # Run the full pipeline: db → analyses → report
-make skeleton-sync msg="description"  # Commit + push skeleton improvements
+make db                              # Rebuild DuckDB from 1_data/
+make analyses                        # Run all run.py scripts in 3_analyses/
+make render d=2026-02-18-report      # Render a specific deliverable in 4_output/
+make outputs                         # Render all deliverables in 4_output/
+make all                             # Run the full pipeline: db → analyses → outputs
+make clean                           # Remove generated files
+make skeleton-sync msg="description" # Commit + push skeleton improvements
 ```
 
 ---

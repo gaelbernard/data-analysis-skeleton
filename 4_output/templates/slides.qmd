@@ -14,13 +14,16 @@ format:
     pdf-engine: lualatex
     section-titles: false
     include-in-header:
-      - templates/slides/preamble.tex
+      - ../templates/slides/preamble.tex
+    header-includes:
+      - \graphicspath{{../templates/slides/}{../templates/report/}{./}}
     fig-pos: "H"
     keep-tex: true
 ---
 
 ```{python}
 #| echo: false
+import sys; sys.path.insert(0, "..")
 from helpers import load_analysis, load_figure
 ```
 

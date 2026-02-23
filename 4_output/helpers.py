@@ -1,8 +1,12 @@
 # 4_output/helpers.py
 # Helpers to load analysis data in Quarto documents.
 #
-# Usage in a Quarto Python chunk:
+# Each deliverable lives in a subfolder of 4_output/ (e.g. 2026-02-18-report/).
+# Import from a .qmd Python chunk like this:
+#
+#   import sys; sys.path.insert(0, "..")
 #   from helpers import load_analysis, load_figure
+#
 #   data = load_analysis("value_frequency")
 #   fig  = load_figure("value_frequency", "bar_chart.pdf")
 

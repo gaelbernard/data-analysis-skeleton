@@ -117,7 +117,8 @@
 % ---------------------------------------------------------------------------
 %  Title page — editorial layout with right-side accent panel
 % ---------------------------------------------------------------------------
-\newcommand{\slidelogopath}{templates/slides/epfl_logo.png}
+% Logo resolved via \graphicspath set in the .qmd's header-includes.
+\newcommand{\slidelogopath}{epfl_logo.png}
 
 \setbeamertemplate{title page}{%
   % Background: light gray panel on the right
@@ -190,4 +191,5 @@
 % ---------------------------------------------------------------------------
 %  Figure paths
 % ---------------------------------------------------------------------------
-\graphicspath{{templates/slides/}{templates/report/}}
+% NOTE: \graphicspath is set per deliverable in the .qmd's header-includes,
+% so that paths resolve correctly from each subfolder.

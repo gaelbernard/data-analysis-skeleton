@@ -2,12 +2,12 @@
 # Makefile — Data Analysis Pipeline
 # ============================================================================
 # Usage:
-#   make db          Build the DuckDB database from raw data in 1_data/
-#   make analyses    Run all analysis scripts in 3_analyses/
-#   make report      Render the Quarto report (PDF)
-#   make slides      Render the Quarto slides (PDF)
-#   make all         Run the full pipeline: db → analyses → report
-#   make clean       Remove generated files (DuckDB, JSONs, figures, PDFs)
+#   make db              Build the DuckDB database from raw data in 1_data/
+#   make analyses        Run all analysis scripts in 3_analyses/
+#   make render d=<dir>  Render a specific deliverable in 4_output/<dir>
+#   make outputs         Render all deliverables in 4_output/
+#   make all             Run the full pipeline: db → analyses → outputs
+#   make clean           Remove generated files (DuckDB, JSONs, figures, PDFs)
 #   make skeleton-sync msg="..."  Commit + push skeleton improvements
 # ============================================================================
 
@@ -24,24 +24,52 @@ analyses:
 		fi; \
 	done
 
-# Render report
-report:
-	cd 4_output && quarto render report.qmd
+# Render a specific deliverable: make render d=2026-02-18-short-report
+render:
+	@if [ -z "$(d)" ]; then \
+		echo "✗ Usage: make render d=<deliverable-folder>"; \
+		echo "  Example: make render d=2026-02-18-short-report"; \
+		echo "  Available:"; \
+		ls -d 4_output/*/  2>/dev/null | grep -v templates | grep -v __pycache__ | sed 's|4_output/||;s|/||' | sed 's/^/    /'; \
+		exit 1; \
+	fi
+	@if [ ! -d "4_output/$(d)" ]; then \
+		echo "✗ Directory 4_output/$(d) not found."; \
+		exit 1; \
+	fi
+	@for qmd in 4_output/$(d)/*.qmd; do \
+		if [ -f "$$qmd" ]; then \
+			echo "▶ Rendering $$qmd"; \
+			(cd "4_output/$(d)" && quarto render $$(basename "$$qmd")); \
+		fi; \
+	done
 
-# Render slides
-slides:
-	cd 4_output && quarto render slides.qmd
+# Render all deliverables (every subfolder in 4_output/ except templates/)
+outputs:
+	@for dir in 4_output/*/; do \
+		case "$$dir" in \
+			*templates/*|*__pycache__/*) continue ;; \
+		esac; \
+		for qmd in $$dir*.qmd; do \
+			if [ -f "$$qmd" ]; then \
+				echo "▶ Rendering $$qmd"; \
+				(cd "$$dir" && quarto render $$(basename "$$qmd")); \
+			fi; \
+		done; \
+	done
 
 # Full pipeline
-all: db analyses report
+all: db analyses outputs
 
 # Clean generated files
 clean:
 	rm -f 2_db/project.duckdb 2_db/*.wal
 	find 3_analyses -name "results.json" -delete
 	find 3_analyses -type d -name "figures" -exec rm -rf {} + 2>/dev/null || true
-	rm -f 4_output/*.pdf 4_output/*.tex 4_output/*.log
-	rm -rf 4_output/*_files/
+	find 4_output -name "*.pdf" -not -path "*/templates/*" -delete
+	find 4_output -name "*.tex" -not -path "*/templates/*" -delete
+	find 4_output -name "*.log" -not -path "*/templates/*" -delete
+	find 4_output -type d -name "*_files" -exec rm -rf {} + 2>/dev/null || true
 
 # Commit skeleton changes and push to the skeleton remote automatically.
 # Usage: make skeleton-sync msg="improve Makefile with clean target"
@@ -72,4 +100,4 @@ skeleton-sync:
 		echo "  To set up: git remote add skeleton <skeleton-repo-url>"; \
 	fi
 
-.PHONY: db analyses report slides all clean skeleton-sync
+.PHONY: db analyses render outputs all clean skeleton-sync
