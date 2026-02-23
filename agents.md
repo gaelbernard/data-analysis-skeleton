@@ -16,7 +16,7 @@ The project is organized into 5 stages. Data flows forward only — never skip a
 | `1_data/` | External sources | Raw data files + sources.yaml | CSV, JSON, XLSX, etc. |
 | `2_db/` | `1_data/*` | `project.duckdb` + `schema.md` | DuckDB + Markdown |
 | `3_analyses/` | `2_db/project.duckdb` | `results.json` + optional figures per subfolder | JSON + PDF/PNG |
-| `4_output/` | `3_analyses/*/results.json` | Report, slides | Quarto → PDF |
+| `4_output/` | `3_analyses/*/results.json` | Report, slides, dashboard | Quarto → PDF/HTML |
 
 ## General Rules
 
@@ -241,12 +241,16 @@ A single project may have multiple deliverables (e.g. a short report, a full rep
   templates/
     report.qmd                      # starter Quarto template for reports
     slides.qmd                      # starter Quarto template for slides
+    dashboard.qmd                   # starter Quarto template for dashboards
     report/                         # shared LaTeX files for reports
       preamble.tex
       titlepage.tex                 # default title page (copied into each deliverable)
       epfl_logo.png
     slides/                         # shared LaTeX files for slides
       preamble.tex
+      epfl_logo.png
+    dashboard/                      # shared assets for dashboards
+      style.css                     # grayscale theme matching report/slides design
       epfl_logo.png
   2026-02-18-short-report/          # ← real deliverable (example)
     report.qmd
@@ -255,13 +259,16 @@ A single project may have multiple deliverables (e.g. a short report, a full rep
   2026-03-01-final-slides/          # ← another deliverable
     slides.qmd
     slides.pdf
+  2026-03-05-overview-dashboard/    # ← another deliverable
+    dashboard.qmd
+    dashboard.html
 ```
 
 ### What the agent should do
 
-1. **Ask which deliverable**: Report or slides? Don't create both at once. Start with what the user asks for.
+1. **Ask which deliverable**: Report, slides, or dashboard? Don't create both at once. Start with what the user asks for.
 2. **Ask for the folder name**: Propose a name like `YYYY-MM-DD-short-description` (e.g. `2026-02-18-short-report`). If unsure, **ask the user** what to call it. Do not guess.
-3. **Create the subfolder**: Copy the appropriate template (e.g. `templates/report.qmd` or `templates/slides.qmd`) into the new subfolder. For reports, also copy `templates/report/titlepage.tex` into the subfolder.
+3. **Create the subfolder**: Copy the appropriate template (e.g. `templates/report.qmd`, `templates/slides.qmd`, or `templates/dashboard.qmd`) into the new subfolder. For reports, also copy `templates/report/titlepage.tex` into the subfolder.
 4. **Review available data**: Read all `results.json` files in `3_analyses/` to understand what data is available. Also read `0_plan/plan.md` for context (objective, audience, output format).
 5. **Propose a structure**: Based on the available analyses and the plan, propose an outline. Present it to the user for confirmation.
 6. **Write the deliverable**: Fill in the `.qmd` file using `load_analysis()` and `load_figure()` to pull data from `3_analyses/`. Never hardcode numbers.
@@ -270,18 +277,26 @@ A single project may have multiple deliverables (e.g. a short report, a full rep
 
 ### Creating a New Deliverable (step by step)
 
+**Report:**
 ```bash
-# 1. Create the subfolder
 mkdir -p 4_output/2026-02-18-short-report
-
-# 2. Copy the template
 cp 4_output/templates/report.qmd 4_output/2026-02-18-short-report/report.qmd
-
-# 3. For reports, also copy the title page
 cp 4_output/templates/report/titlepage.tex 4_output/2026-02-18-short-report/titlepage.tex
-
-# 4. Edit, then render
 make render d=2026-02-18-short-report
+```
+
+**Slides:**
+```bash
+mkdir -p 4_output/2026-03-01-final-slides
+cp 4_output/templates/slides.qmd 4_output/2026-03-01-final-slides/slides.qmd
+make render d=2026-03-01-final-slides
+```
+
+**Dashboard:**
+```bash
+mkdir -p 4_output/2026-03-05-overview-dashboard
+cp 4_output/templates/dashboard.qmd 4_output/2026-03-05-overview-dashboard/dashboard.qmd
+make render d=2026-03-05-overview-dashboard
 ```
 
 ### The Golden Rule
@@ -294,7 +309,7 @@ make render d=2026-02-18-short-report
 
 ```python
 import sys; sys.path.insert(0, "..")
-from helpers import load_analysis, load_figure
+from helpers import load_analysis, load_figure, load_value
 
 data = load_analysis("value_frequency")
 # data["results"] → list of dicts
@@ -302,6 +317,9 @@ data = load_analysis("value_frequency")
 # data["interpretation"] → string
 
 fig_path = load_figure("value_frequency", "bar_chart.pdf")
+
+# For dashboards: extract a single scalar for value boxes
+total = load_value("value_frequency", "count", agg="sum")
 ```
 
 ### Path Conventions
@@ -325,11 +343,40 @@ The `templates/report.qmd` template provides a standard structure. Follow these 
 6. **Tables**: Use booktabs style (`\toprule`, `\midrule`, `\bottomrule`). Always include `\caption` and `\label`. Use `[H]` placement.
 7. **Figures**: Generated in `3_analyses/`, referenced via `load_figure()`. Always `[H]` placement with caption and label. Prefer PDF for vector graphics.
 
+### Slides Structure and Conventions
+
+The `templates/slides.qmd` template provides a standard starting point. Follow these conventions:
+
+1. **Disclaimer slide** (`disclaimerbox`): Include a disclaimer slide near the beginning of every presentation (typically right after the context/introduction slide). Use the orange `disclaimerbox` environment to flag data limitations, AI usage, methodological choices, and scope. Keep bullet points short and adapted to the project.
+2. **One idea per slide**: Each slide should communicate a single point. Avoid dense text.
+3. **Figures**: Generated in `3_analyses/`, referenced via `load_figure()`. Always include a caption or descriptive subtitle.
+4. **Tables**: Use booktabs style (`\toprule`, `\midrule`, `\bottomrule`). Keep tables small (max 5-6 rows) to fit on a slide.
+
+### Dashboard Structure and Conventions
+
+The `templates/dashboard.qmd` template produces an interactive HTML dashboard. Follow these conventions:
+
+1. **Pages** (`#` headings): Each top-level heading creates a navigation tab. Use "Overview" for the landing page and "About" for disclaimers and metadata.
+2. **Rows and columns** (`##` headings): Organize cards in rows. Use `{height=...}` to control row proportions and `{width=...}` on cards within a row.
+3. **Cards** (`###` headings): Each card contains one thing: a value box (KPI), a chart, or a table. Keep cards focused.
+4. **Value boxes**: Use `#| content: valuebox` in Python chunks to display large KPI numbers. Use `load_value()` from helpers to extract scalars.
+5. **Disclaimer**: Include an "About" page with a `.disclaimer-box` div for data caveats (mirrors the report/slides disclaimer boxes).
+6. **No hardcoded numbers**: Same golden rule as reports. Every number comes from `results.json`.
+7. **Interactive plots**: Since dashboards are HTML, prefer interactive libraries (plotly, altair) over static matplotlib when it adds value.
+8. **CSS theme**: The `templates/dashboard/style.css` provides a grayscale theme matching the report and slides aesthetic. The theme path in the YAML uses `templates/dashboard/style.css` (relative to `4_output/`, resolved at render time from the deliverable subfolder).
+
+When creating a dashboard deliverable, update the theme path in the YAML to point correctly from the subfolder:
+```yaml
+theme: [default, ../templates/dashboard/style.css]
+```
+
 ### Shared Templates
 
 - `templates/report/preamble.tex` — LaTeX preamble with colors, tcolorbox environments (`disclaimerbox`, `reportbox`, `docquote`), and package imports.
 - `templates/report/titlepage.tex` — Default title page (copy into each report deliverable subfolder and customize).
-- `templates/slides/preamble.tex` — Beamer preamble with modern minimal theme.
+- `templates/slides/preamble.tex` — Beamer preamble with modern minimal theme, plus `disclaimerbox` environment.
+- `templates/dashboard/style.css` — CSS theme for dashboards, matching the grayscale palette of report and slides.
+- `templates/dashboard/epfl_logo.png` — Logo for the dashboard navbar.
 
 Reusable template improvements should be committed with `make skeleton-sync`.
 
@@ -368,8 +415,9 @@ make skeleton-sync msg="description" # Commit + push skeleton improvements
 
 If something breaks, check in this order:
 
-1. **Report shows wrong numbers?** → Re-run the analysis (`make analyses`), then re-render (`make report`).
+1. **Report shows wrong numbers?** → Re-run the analysis (`make analyses`), then re-render (`make render d=<folder>`).
 2. **Analysis query fails?** → Check `2_db/schema.md` — did the DB schema change? Update the query in `run.py`.
 3. **DB build fails?** → Check that raw data in `1_data/` hasn't changed format. Update `build_db.py`.
 4. **Missing data for the report?** → Create a new analysis subfolder in `3_analyses/`. Never hardcode.
 5. **API key error?** → Check `.env` file exists and has the right keys. See `.env.example`.
+6. **Can't find helpers.py?** → Make sure the first Python chunk has `import sys; sys.path.insert(0, "..")`.

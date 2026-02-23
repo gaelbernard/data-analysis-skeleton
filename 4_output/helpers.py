@@ -71,6 +71,39 @@ def load_analysis(name):
     return data
 
 
+def load_value(name, column, agg="first"):
+    """Load a single scalar value from an analysis, useful for dashboard value boxes.
+
+    Args:
+        name: subfolder name in 3_analyses/ (e.g., "value_frequency")
+        column: column name to extract from results
+        agg: aggregation method — "first" (default), "sum", "mean", "min", "max", "count"
+
+    Returns:
+        The scalar value (number or string)
+    """
+    data = load_analysis(name)
+    values = [row[column] for row in data["results"] if column in row]
+    if not values:
+        raise KeyError(
+            f"Column '{column}' not found in analysis '{name}'. "
+            f"Available: {list(data['results'][0].keys()) if data['results'] else '(empty)'}"
+        )
+    if agg == "first":
+        return values[0]
+    if agg == "sum":
+        return sum(values)
+    if agg == "mean":
+        return sum(values) / len(values)
+    if agg == "min":
+        return min(values)
+    if agg == "max":
+        return max(values)
+    if agg == "count":
+        return len(values)
+    raise ValueError(f"Unknown aggregation '{agg}'. Use: first, sum, mean, min, max, count")
+
+
 def load_figure(name, fig_name):
     """Return the path to a figure from a named analysis.
 

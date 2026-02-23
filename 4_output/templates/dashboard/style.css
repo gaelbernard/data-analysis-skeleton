@@ -1,0 +1,331 @@
+/* =============================================================================
+   Dashboard Theme — clean grayscale design matching report & slides preambles
+   Helvetica Neue · generous whitespace · editorial layout
+   ============================================================================= */
+
+/* ---------------------------------------------------------------------------
+   Fonts
+   --------------------------------------------------------------------------- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* Grayscale palette (mirrors slides/preamble.tex) */
+  --clean-black:  #1A1A1A;
+  --clean-dark:   #333333;
+  --clean-mid:    #999999;
+  --clean-light:  #D0D0D0;
+  --clean-pale:   #F2F2F2;
+  --clean-faint:  #F8F8F8;
+  --clean-white:  #FFFFFF;
+
+  /* Accents */
+  --epfl-red:     #FF0000;
+  --link-blue:    #1A5276;
+  --accent-bar:   #444444;
+
+  /* Disclaimer colors */
+  --disclaimer-bg:    #FFF8E1;
+  --disclaimer-bar:   #F0A830;
+  --disclaimer-title: #5D4037;
+
+  /* Box colors (from report preamble) */
+  --box-bg:       #F6F8FA;
+  --box-title:    #333333;
+}
+
+/* ---------------------------------------------------------------------------
+   Base typography
+   --------------------------------------------------------------------------- */
+body {
+  font-family: 'Helvetica Neue', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--clean-black);
+  background-color: var(--clean-pale);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ---------------------------------------------------------------------------
+   Navbar — dark, minimal
+   --------------------------------------------------------------------------- */
+.navbar {
+  background-color: var(--clean-black) !important;
+  border-bottom: none !important;
+  box-shadow: none !important;
+  padding: 0.6rem 1.5rem !important;
+}
+
+.navbar-brand,
+.navbar .navbar-brand {
+  color: var(--clean-white) !important;
+  font-weight: 600;
+  font-size: 1.05rem;
+  letter-spacing: 0.01em;
+}
+
+.navbar-nav .nav-link {
+  color: var(--clean-light) !important;
+  font-size: 0.85rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  transition: color 0.15s ease;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+  color: var(--clean-white) !important;
+}
+
+.navbar-nav .nav-link.active {
+  border-bottom: 2px solid var(--clean-white);
+}
+
+/* ---------------------------------------------------------------------------
+   Page / dashboard layout
+   --------------------------------------------------------------------------- */
+.dashboard-page {
+  padding: 1.2rem;
+}
+
+.quarto-dashboard .dashboard-content {
+  background-color: var(--clean-pale);
+}
+
+/* ---------------------------------------------------------------------------
+   Cards — clean, borderless, subtle shadow
+   --------------------------------------------------------------------------- */
+.card {
+  background-color: var(--clean-white);
+  border: 1px solid rgba(0, 0, 0, 0.06) !important;
+  border-radius: 6px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+  transition: box-shadow 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+}
+
+.card-header {
+  background-color: var(--clean-white) !important;
+  border-bottom: 1px solid var(--clean-pale) !important;
+  padding: 0.75rem 1rem !important;
+  font-weight: 600;
+  font-size: 0.82rem;
+  color: var(--clean-dark);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.card-body {
+  padding: 1rem 1.2rem !important;
+}
+
+/* ---------------------------------------------------------------------------
+   Value boxes — large KPI numbers
+   --------------------------------------------------------------------------- */
+.valuebox .card {
+  border-left: 4px solid var(--accent-bar) !important;
+}
+
+.valuebox .value-box-value {
+  font-size: 2.2rem !important;
+  font-weight: 700;
+  color: var(--clean-black);
+  letter-spacing: -0.02em;
+}
+
+.valuebox .value-box-title {
+  font-size: 0.78rem !important;
+  font-weight: 500;
+  color: var(--clean-mid);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Value box color variants */
+.valuebox .card.bg-primary {
+  border-left-color: var(--accent-bar) !important;
+  background-color: var(--clean-white) !important;
+}
+
+.valuebox .card.bg-secondary {
+  border-left-color: var(--clean-mid) !important;
+  background-color: var(--clean-white) !important;
+}
+
+.valuebox .card.bg-success {
+  border-left-color: #4A7C59 !important;
+  background-color: var(--clean-white) !important;
+}
+
+.valuebox .card.bg-warning {
+  border-left-color: var(--disclaimer-bar) !important;
+  background-color: var(--clean-white) !important;
+}
+
+.valuebox .card.bg-danger {
+  border-left-color: var(--epfl-red) !important;
+  background-color: var(--clean-white) !important;
+}
+
+/* Override colored backgrounds: keep text dark */
+.valuebox .card[class*="bg-"] .value-box-value,
+.valuebox .card[class*="bg-"] .value-box-title {
+  color: var(--clean-black) !important;
+}
+
+/* Bslib value boxes (Quarto 1.4+) */
+.bslib-value-box .value-box-showcase .bi {
+  color: var(--clean-mid) !important;
+  font-size: 2.5rem;
+}
+
+.bslib-value-box .value-box-area {
+  padding: 0.8rem 1rem !important;
+}
+
+/* ---------------------------------------------------------------------------
+   Tables — booktabs-inspired
+   --------------------------------------------------------------------------- */
+.card table,
+.dashboard-content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.card table thead th {
+  border-top: 2px solid var(--clean-dark);
+  border-bottom: 1px solid var(--clean-dark);
+  padding: 0.5rem 0.75rem;
+  font-weight: 600;
+  font-size: 0.78rem;
+  color: var(--clean-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.card table tbody td {
+  padding: 0.45rem 0.75rem;
+  border-bottom: 1px solid var(--clean-pale);
+  color: var(--clean-black);
+}
+
+.card table tbody tr:last-child td {
+  border-bottom: 2px solid var(--clean-dark);
+}
+
+.card table tbody tr:hover {
+  background-color: var(--clean-faint);
+}
+
+/* ---------------------------------------------------------------------------
+   Figures / plots
+   --------------------------------------------------------------------------- */
+.card img,
+.card .plot-container {
+  max-width: 100%;
+  height: auto;
+}
+
+.card .cell-output-display {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ---------------------------------------------------------------------------
+   Sidebar (if used for navigation)
+   --------------------------------------------------------------------------- */
+.dashboard-sidebar {
+  background-color: var(--clean-white) !important;
+  border-right: 1px solid var(--clean-pale) !important;
+}
+
+/* ---------------------------------------------------------------------------
+   Disclaimer box (mirrors report/slides amber box in CSS)
+   --------------------------------------------------------------------------- */
+.disclaimer-box {
+  background-color: var(--disclaimer-bg);
+  border-left: 4px solid var(--disclaimer-bar);
+  border-radius: 4px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.82rem;
+  color: var(--disclaimer-title);
+  line-height: 1.5;
+}
+
+.disclaimer-box strong {
+  font-weight: 600;
+}
+
+/* ---------------------------------------------------------------------------
+   Scrollbar styling (subtle)
+   --------------------------------------------------------------------------- */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--clean-pale);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--clean-light);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--clean-mid);
+}
+
+/* ---------------------------------------------------------------------------
+   Tabset panels (page tabs)
+   --------------------------------------------------------------------------- */
+.nav-tabs {
+  border-bottom: 1px solid var(--clean-light) !important;
+}
+
+.nav-tabs .nav-link {
+  color: var(--clean-mid) !important;
+  font-size: 0.82rem;
+  font-weight: 500;
+  border: none !important;
+  padding: 0.5rem 1rem;
+}
+
+.nav-tabs .nav-link:hover {
+  color: var(--clean-dark) !important;
+}
+
+.nav-tabs .nav-link.active {
+  color: var(--clean-black) !important;
+  border-bottom: 2px solid var(--clean-black) !important;
+  background-color: transparent !important;
+}
+
+/* ---------------------------------------------------------------------------
+   Footer
+   --------------------------------------------------------------------------- */
+.quarto-dashboard .dashboard-footer {
+  font-size: 0.72rem;
+  color: var(--clean-mid);
+  text-align: center;
+  padding: 0.5rem;
+  border-top: 1px solid var(--clean-pale);
+}
+
+/* ---------------------------------------------------------------------------
+   Responsive adjustments
+   --------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .valuebox .value-box-value {
+    font-size: 1.6rem !important;
+  }
+
+  .card-header {
+    font-size: 0.75rem;
+  }
+}

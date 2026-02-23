@@ -16,7 +16,7 @@ Data flows forward only. Never skip a stage or create backward dependencies.
 2. **Single DuckDB** (`2_db/project.duckdb`). Always `read_only=True` outside of `2_db/`.
 3. **One subfolder per analysis** in `3_analyses/`. Each has `run.py` + `results.json` + optional `figures/`.
 4. **JSON contract**: every `results.json` has: `query`, `n_results`, `results`, `description`, `interpretation`, `figures`.
-5. **Never hardcode numbers** in `4_output/`. Load everything from `3_analyses/*/results.json`. Each deliverable is a dated subfolder in `4_output/` (e.g. `2026-02-18-short-report/`).
+5. **Never hardcode numbers** in `4_output/`. Load everything from `3_analyses/*/results.json`. Each deliverable is a dated subfolder in `4_output/` (e.g. `2026-02-18-short-report/`). Three template types: report (PDF), slides (PDF), dashboard (HTML).
 6. **Figures use the same data** as their parent JSON (or a subset, never more).
 7. **API keys** in `.env` only (use `python-dotenv`). Never hardcode secrets.
 8. **DB schema changes** → check and re-run affected analyses in `3_analyses/`.

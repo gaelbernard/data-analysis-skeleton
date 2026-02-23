@@ -67,6 +67,7 @@ clean:
 	find 3_analyses -name "results.json" -delete
 	find 3_analyses -type d -name "figures" -exec rm -rf {} + 2>/dev/null || true
 	find 4_output -name "*.pdf" -not -path "*/templates/*" -delete
+	find 4_output -name "*.html" -not -path "*/templates/*" -delete
 	find 4_output -name "*.tex" -not -path "*/templates/*" -delete
 	find 4_output -name "*.log" -not -path "*/templates/*" -delete
 	find 4_output -type d -name "*_files" -exec rm -rf {} + 2>/dev/null || true
