@@ -1,0 +1,7 @@
+# .cursorignore — files the AI agent cannot read or index
+# Uses the same syntax as .gitignore
+#
+# Add confidential data files here so the AI agent never accesses them.
+# Example:
+#   1_data/confidential_survey.csv
+#   1_data/internal_hr_data.xlsx

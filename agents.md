@@ -87,7 +87,7 @@ The user can trigger consolidation explicitly (e.g., "let's finalize the plan") 
 ### Rules
 
 - Every data file must be documented in `sources.yaml` with: filename, origin, URL (if applicable), date accessed, description, format, and `confidential` flag.
-- **Confidentiality**: All data is public by default (`confidential: false`). If a file is confidential (`confidential: true`), it must be added to `.gitignore` so it is never committed. The `sources.yaml` entry itself is still committed — only the data file is excluded.
+- **Confidentiality**: All data is public by default (`confidential: false`). If a file is confidential (`confidential: true`), it must be added to both `.gitignore` (so it is never committed) and `.cursorignore` (so the AI agent cannot read it). The `sources.yaml` entry itself is still committed — only the data file is excluded and hidden from the agent.
 - Raw data is committed to git (unless too large or confidential — in either case, document how to obtain it and add a download script in `1_data/`).
 - Never modify raw data files after collection. All transformations happen in `2_db/`.
 - If data comes from an API or database, write a collection script in `1_data/` and document it in `sources.yaml`.
