@@ -296,6 +296,7 @@ make render d=2026-03-01-final-slides
 ```bash
 mkdir -p 4_output/2026-03-05-overview-dashboard
 cp 4_output/templates/dashboard.qmd 4_output/2026-03-05-overview-dashboard/dashboard.qmd
+cp 4_output/templates/dashboard/epfl_logo.png 4_output/2026-03-05-overview-dashboard/epfl_logo.png
 make render d=2026-03-05-overview-dashboard
 ```
 

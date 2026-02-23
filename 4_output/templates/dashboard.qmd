@@ -1,5 +1,7 @@
 ---
 title: "Dashboard Title"
+plotly:
+  connected: true
 format:
   dashboard:
     theme: [default, ../templates/dashboard/style.css]
@@ -7,13 +9,17 @@ format:
     nav-buttons:
       - icon: github
         href: https://github.com/
-    logo: ../templates/dashboard/epfl_logo.png
+    logo: epfl_logo.png
 ---
 
 ```{python}
 #| echo: false
 import sys; sys.path.insert(0, "..")
 from helpers import load_analysis, load_figure
+
+# Use Plotly CDN instead of embedding the full library (~3.5MB) inline
+import plotly.io as pio
+pio.renderers.default = "notebook_connected"
 ```
 
 <!-- ================================================================== -->
