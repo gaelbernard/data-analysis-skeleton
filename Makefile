@@ -2,6 +2,7 @@
 # Makefile — Data Analysis Pipeline
 # ============================================================================
 # Usage:
+#   make venv            Create virtual environment and install dependencies
 #   make status          Show pipeline status and validation
 #   make db              Build the DuckDB database from raw data in 1_data/
 #   make analyses        Run all analysis scripts in 3_analyses/
@@ -12,8 +13,34 @@
 #   make skeleton-sync msg="..."  Commit + push skeleton improvements
 # ============================================================================
 
-# Use python3 explicitly (macOS ships without 'python')
-PYTHON ?= python3
+# Auto-detect .venv: use it if it exists, otherwise fall back to python3
+ifneq (,$(wildcard .venv/bin/python))
+    PYTHON ?= .venv/bin/python
+else
+    PYTHON ?= python3
+endif
+
+# Create virtual environment and install dependencies
+venv:
+	@if [ -d ".venv" ]; then \
+		echo "⚠ .venv already exists. To recreate, run: rm -rf .venv && make venv"; \
+	else \
+		echo "▶ Creating virtual environment..."; \
+		python3 -m venv .venv; \
+		.venv/bin/pip install --upgrade pip; \
+		if [ -f "requirements.txt" ]; then \
+			echo "▶ Installing dependencies from requirements.txt..."; \
+			.venv/bin/pip install -r requirements.txt; \
+		fi; \
+		echo ""; \
+		echo "✓ Virtual environment created at .venv/"; \
+		echo ""; \
+		echo "  All 'make' commands will now automatically use .venv/bin/python."; \
+		echo ""; \
+		echo "  To activate in your shell (optional, for interactive use):"; \
+		echo "    source .venv/bin/activate"; \
+		echo ""; \
+	fi
 
 # Show pipeline status and validation
 status:
@@ -109,4 +136,4 @@ skeleton-sync:
 		echo "  To set up: git remote add skeleton <skeleton-repo-url>"; \
 	fi
 
-.PHONY: status db analyses render outputs all clean skeleton-sync
+.PHONY: venv status db analyses render outputs all clean skeleton-sync
